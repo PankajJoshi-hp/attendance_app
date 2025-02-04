@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   String text = 'No todos added';
   final List<Todo> todoList = [];
   final TextEditingController textController = TextEditingController();
-  bool isCompleted = false;
+  final _formKey = GlobalKey<FormState>();
 
   void setText() {
     String newText = textController.text.trim();
@@ -71,144 +71,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(
-            child: Text(
-          "Todo".toUpperCase(),
-          style: TextStyle(
-              fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black87),
-        )),
-        backgroundColor: Colors.lightGreen,
-      ),
-      body: todoList.isEmpty
-          ? Text('No todos added')
-          : ListView(
-              children: todoList
-                  .map((todo) => Card(
-                      child: ListTile(
-                          leading: Checkbox(
-                            value: todo.isCompleted,
-                            onChanged: (_) => toggleTodoStatus(todo.id),
-                          ),
-                          title: Text(todo.title),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            spacing: 5,
-                            children: <Widget>[
-                              InkWell(
-                                  onTap: () {
-                                    textController.text = todo.title;
-                                    print('edit clicked ${todo.title}');
-                                    print(
-                                        '*************************************');
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) =>
-                                            Dialog(
-                                              child: Padding(
-                                                padding: EdgeInsets.all(30),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: <Widget>[
-                                                    TextFormField(
-                                                      maxLines: 3,
-                                                      onChanged: (value) =>
-                                                          text = value,
-                                                      controller:
-                                                          textController,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        label: Text(
-                                                          'Enter your task here...',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .lightGreen),
-                                                        ),
-                                                        focusedBorder: OutlineInputBorder(
-                                                            borderSide:
-                                                                const BorderSide(
-                                                                    color: Colors
-                                                                        .lightGreen,
-                                                                    width: 2),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5)),
-                                                        enabledBorder: OutlineInputBorder(
-                                                            borderSide:
-                                                                const BorderSide(
-                                                                    color: Colors
-                                                                        .lightGreen,
-                                                                    width: 2),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5)),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          if (textController
-                                                              .text
-                                                              .trim()
-                                                              .isNotEmpty) {
-                                                            updateTodo(
-                                                                todo.id,
-                                                                textController
-                                                                    .text
-                                                                    .trim());
-                                                          }
-                                                        },
-                                                        style: ButtonStyle(
-                                                            backgroundColor:
-                                                                WidgetStatePropertyAll(
-                                                                    Colors
-                                                                        .lightGreen),
-                                                            shape: WidgetStatePropertyAll(
-                                                                RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            5)))),
-                                                        child: Text(
-                                                            'Submit'
-                                                                .toUpperCase(),
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white)))
-                                                  ],
-                                                ),
-                                              ),
-                                            ));
-                                  },
-                                  child: Icon(Icons.edit,
-                                      size: 24, color: Colors.lightGreen)),
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    todoList.remove(todo);
-                                  });
-                                },
-                                child: Icon(Icons.delete,
-                                    size: 24, color: Colors.lightGreen),
-                              ),
-                            ],
-                          ))))
-                  .toList()),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.lightGreen,
-        onPressed: () => showDialog(
-            context: context,
-            builder: (BuildContext context) => Dialog(
-                  child: Padding(
-                    padding: EdgeInsets.all(30),
+  openDialogBox(context, todo, isUpdate) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => Dialog(
+              child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Form(
+                    key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -216,6 +87,12 @@ class _HomePageState extends State<HomePage> {
                       children: <Widget>[
                         TextFormField(
                           maxLines: 3,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Text field cannot be empty';
+                            }
+                            return null;
+                          },
                           onChanged: (value) => text = value,
                           controller: textController,
                           decoration: InputDecoration(
@@ -234,7 +111,17 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         TextButton(
-                            onPressed: setText,
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                if (isUpdate == true) {
+                                  updateTodo(
+                                      todo.id, textController.text.trim());
+                                } else {
+                                  setText();
+                                }
+                                Navigator.of(context).pop();
+                              }
+                            },
                             style: ButtonStyle(
                                 backgroundColor:
                                     WidgetStatePropertyAll(Colors.lightGreen),
@@ -246,8 +133,90 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(color: Colors.white)))
                       ],
                     ),
-                  ),
-                )),
+                  )),
+            ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Todo".toUpperCase(),
+          style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent),
+        ),
+      ),
+      // backgroundColor: Colors.white,
+      body: Column(
+        children: <Widget>[
+          Container(
+            color: Colors.black,
+            height: 1,
+          ),
+          todoList.isEmpty
+              ? Text('No todos added')
+              : Expanded(
+                  child: ListView(
+                      children: todoList
+                          .map((todo) => Card(
+                              child: ListTile(
+                                  leading: Checkbox(
+                                    activeColor: Colors.lightGreen,
+                                    value: todo.isCompleted,
+                                    onChanged: (_) => toggleTodoStatus(todo.id),
+                                  ),
+                                  title: todo.isCompleted == false
+                                      ? Text(
+                                          todo.title,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.black),
+                                        )
+                                      : Text(
+                                          todo.title,
+                                          style: TextStyle(
+                                            color: Colors.lightGreen,
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                          ),
+                                        ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    spacing: 5,
+                                    children: <Widget>[
+                                      todo.isCompleted == false
+                                          ? InkWell(
+                                              onTap: () {
+                                                textController.text =
+                                                    todo.title;
+                                                openDialogBox(
+                                                    context, todo, true);
+                                              },
+                                              child: Icon(Icons.edit,
+                                                  size: 24,
+                                                  color: Colors.lightBlue))
+                                          : Text(''),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            todoList.remove(todo);
+                                          });
+                                        },
+                                        child: Icon(Icons.delete,
+                                            size: 24, color: Colors.red),
+                                      ),
+                                    ],
+                                  ))))
+                          .toList()),
+                )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.lightGreen,
+        onPressed: () => openDialogBox(context, null, false),
         child: const Text(
           '+',
           style: TextStyle(
