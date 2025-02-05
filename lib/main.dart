@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/controller.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,59 +24,14 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class Todo {
-  final String id;
-  String title;
-  bool isCompleted;
-  Todo({
-    required this.id,
-    required this.title,
-    this.isCompleted = false,
-  });
-}
-
 class _HomePageState extends State<HomePage> {
-  String text = 'No todos added';
-  final List<Todo> todoList = [];
-  final TextEditingController textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  void setText() {
-    String newText = textController.text.trim();
-    if (newText.isNotEmpty) {
-      setState(() {
-        todoList.add(Todo(id: DateTime.now().toString(), title: newText));
-        print(todoList);
-        textController.clear();
-      });
-    }
-  }
-
-  void updateTodo(String id, String newTitle) {
-    setState(() {
-      final index = todoList.indexWhere((todo) => todo.id == id);
-      if (index != -1) {
-        todoList[index].title = newTitle;
-      }
-      textController.clear();
-    });
-  }
-
-  void toggleTodoStatus(
-    String id,
-  ) {
-    setState(() {
-      final index = todoList.indexWhere((todo) => todo.id == id);
-      if (index != -1) {
-        todoList[index].isCompleted = !todoList[index].isCompleted;
-      }
-    });
-  }
+  final Controller todos = Get.put(Controller());
 
   openDialogBox(context, todo, isUpdate) {
     showDialog(
         context: context,
-        barrierDismissible: false,
+        // barrierDismissible: false,
         builder: (BuildContext context) => Dialog(
               child: Padding(
                   padding: EdgeInsets.all(30),
@@ -93,8 +50,8 @@ class _HomePageState extends State<HomePage> {
                             }
                             return null;
                           },
-                          onChanged: (value) => text = value,
-                          controller: textController,
+                          onChanged: (value) => todos.text = value,
+                          controller: todos.textController,
                           decoration: InputDecoration(
                             label: Text(
                               'Enter your task here...',
@@ -114,10 +71,10 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 if (isUpdate == true) {
-                                  updateTodo(
-                                      todo.id, textController.text.trim());
+                                  todos.updateTodo(todo.id,
+                                      todos.textController.text.trim());
                                 } else {
-                                  setText();
+                                  todos.setText();
                                 }
                                 Navigator.of(context).pop();
                               }
@@ -156,67 +113,74 @@ class _HomePageState extends State<HomePage> {
             color: Colors.black,
             height: 1,
           ),
-          todoList.isEmpty
-              ? Text('No todos added')
-              : Expanded(
-                  child: ListView(
-                      children: todoList
-                          .map((todo) => Card(
-                              child: ListTile(
-                                  leading: Checkbox(
-                                    activeColor: Colors.lightGreen,
-                                    value: todo.isCompleted,
-                                    onChanged: (_) => toggleTodoStatus(todo.id),
-                                  ),
-                                  title: todo.isCompleted == false
-                                      ? Text(
-                                          todo.title,
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.black),
-                                        )
-                                      : Text(
-                                          todo.title,
-                                          style: TextStyle(
-                                            color: Colors.lightGreen,
-                                            decoration:
-                                                TextDecoration.lineThrough,
+          Obx(() => Expanded(
+                child: todos.todoList.isEmpty
+                    ? Center(
+                        child: Text(
+                          'Please add some todos 🤧.',
+                          style: TextStyle(fontSize: 20, color: Colors.black87),
+                        ),
+                      )
+                    : ListView(
+                        children: todos.todoList
+                            .map((todo) => Card(
+                                child: ListTile(
+                                    leading: Checkbox(
+                                      activeColor: Colors.lightBlue,
+                                      value: todo.isCompleted,
+                                      onChanged: (_) =>
+                                          todos.toggleTodoStatus(todo.id),
+                                    ),
+                                    title: todo.isCompleted == false
+                                        ? Text(
+                                            todo.title,
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black),
+                                          )
+                                        : Text(
+                                            todo.title,
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                            ),
                                           ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      spacing: 5,
+                                      children: <Widget>[
+                                        todo.isCompleted == false
+                                            ? InkWell(
+                                                onTap: () {
+                                                  todos.textController.text =
+                                                      todo.title;
+                                                  openDialogBox(
+                                                      context, todo, true);
+                                                },
+                                                child: Icon(Icons.edit,
+                                                    size: 24,
+                                                    color: Colors.lightBlue))
+                                            : Text(''),
+                                        InkWell(
+                                          onTap: () {
+                                            todos.deleteTodo(todo.id);
+                                          },
+                                          child: Icon(Icons.delete,
+                                              size: 24, color: Colors.red),
                                         ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    spacing: 5,
-                                    children: <Widget>[
-                                      todo.isCompleted == false
-                                          ? InkWell(
-                                              onTap: () {
-                                                textController.text =
-                                                    todo.title;
-                                                openDialogBox(
-                                                    context, todo, true);
-                                              },
-                                              child: Icon(Icons.edit,
-                                                  size: 24,
-                                                  color: Colors.lightBlue))
-                                          : Text(''),
-                                      InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            todoList.remove(todo);
-                                          });
-                                        },
-                                        child: Icon(Icons.delete,
-                                            size: 24, color: Colors.red),
-                                      ),
-                                    ],
-                                  ))))
-                          .toList()),
-                )
+                                      ],
+                                    ))))
+                            .toList()),
+              )),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.lightGreen,
-        onPressed: () => openDialogBox(context, null, false),
+        backgroundColor: Colors.lightBlue,
+        onPressed: () {
+          todos.textController.clear();
+          openDialogBox(context, null, false);
+        },
         child: const Text(
           '+',
           style: TextStyle(
