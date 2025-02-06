@@ -15,8 +15,15 @@ class Controller extends GetxController {
     List<String> jsonStringList =
         todoList.map((todo) => jsonEncode(todo.toJson())).toList();
     await prefs.setStringList('todo_list', jsonStringList);
-    print('****************************************');
-    print(jsonStringList);
+  }
+
+  Future<void> loadTodoList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? jsonStringList = prefs.getStringList('todo_list');
+    if (jsonStringList != null) {
+      todoList.assignAll(jsonStringList
+          .map((jsonString) => Todo.fromJson(jsonDecode(jsonString))));
+    }
   }
 
   void setText() async {

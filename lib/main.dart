@@ -1,8 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/controller.dart';
+import 'package:todo_app/todoModal.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final Controller todos = Get.put(Controller());
+  await todos.loadTodoList();
   runApp(MyApp());
 }
 
@@ -26,12 +32,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormState>();
-  final Controller todos = Get.put(Controller());
+  final Controller todos = Get.find<Controller>();
 
   openDialogBox(context, todo, isUpdate) {
     showDialog(
         context: context,
-        // barrierDismissible: false,
         builder: (BuildContext context) => Dialog(
               child: Padding(
                   padding: EdgeInsets.all(30),
@@ -68,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         TextButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 if (isUpdate == true) {
                                   todos.updateTodo(todo.id,
@@ -76,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                                 } else {
                                   todos.setText();
                                 }
+                                await todos.saveTodoList(todos.todoList);
                                 Navigator.of(context).pop();
                               }
                             },
@@ -106,7 +112,6 @@ class _HomePageState extends State<HomePage> {
               color: Colors.blueAccent),
         ),
       ),
-      // backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
           Container(
@@ -128,8 +133,11 @@ class _HomePageState extends State<HomePage> {
                                     leading: Checkbox(
                                       activeColor: Colors.lightBlue,
                                       value: todo.isCompleted,
-                                      onChanged: (_) =>
-                                          todos.toggleTodoStatus(todo.id),
+                                      onChanged: (_) async {
+                                        todos.toggleTodoStatus(todo.id);
+                                        await todos
+                                            .saveTodoList(todos.todoList);
+                                      },
                                     ),
                                     title: todo.isCompleted == false
                                         ? Text(
@@ -163,8 +171,10 @@ class _HomePageState extends State<HomePage> {
                                                     color: Colors.lightBlue))
                                             : Text(''),
                                         InkWell(
-                                          onTap: () {
+                                          onTap: () async {
                                             todos.deleteTodo(todo.id);
+                                            await todos
+                                                .saveTodoList(todos.todoList);
                                           },
                                           child: Icon(Icons.delete,
                                               size: 24, color: Colors.red),
