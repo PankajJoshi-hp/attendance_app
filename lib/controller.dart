@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/todoModal.dart';
+import 'package:todo_app/reusable_widgets/todo_modal.dart';
 
 class Controller extends GetxController {
   String text = 'No todos added';
