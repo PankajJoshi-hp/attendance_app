@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/components/sign_up_page.dart';
 import 'package:todo_app/controller.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignUpPage(),
+      home: LogInPage(),
     );
   }
 }
