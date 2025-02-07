@@ -1,21 +1,29 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class LogInPage extends StatelessWidget {
+class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
+
+  @override
+  State<LogInPage> createState() => _LogInPageState();
+}
+
+class _LogInPageState extends State<LogInPage> {
+  bool isPasswordOpen = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Container(
+          child: SingleChildScrollView(
+              child: Container(
         padding: EdgeInsets.only(left: 30, right: 30),
         width: double.infinity,
         child: Form(
             child: Column(
           spacing: 30,
           children: <Widget>[
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.06),
             Text(
               'Hi, Welcome Back! 👋',
               style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
@@ -67,20 +75,18 @@ class LogInPage extends StatelessWidget {
                   ),
                 ),
                 TextFormField(
+                  obscureText: isPasswordOpen ? false : true,
                   decoration: InputDecoration(
-                      label: ListTile(
-                        title: Text(
-                          'Enter Your Password',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        trailing: Icon(
-                          Icons.password,
-                          size: 20,
-                          color: Colors.black54,
-                        ),
+                      label: Text(
+                        'Enter Your Password',
+                        style: TextStyle(fontSize: 18),
                       ),
-                      contentPadding:
-                          EdgeInsets.only(top: 24, bottom: 24, left: 10),
+                      suffixIcon: const Icon(
+                        Icons.visibility_off,
+                        size: 20,
+                        color: Colors.black54,
+                      ),
+                      contentPadding: EdgeInsets.all(24),
                       focusedBorder: OutlineInputBorder(
                           borderSide:
                               const BorderSide(color: Colors.black54, width: 1),
@@ -220,6 +226,7 @@ class LogInPage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -248,7 +255,7 @@ class LogInPage extends StatelessWidget {
             )
           ],
         )),
-      )),
+      ))),
     );
   }
 }

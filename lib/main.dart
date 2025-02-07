@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_app/components/api_test.dart';
 import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/components/sign_up_page.dart';
-import 'package:todo_app/controller.dart';
+import 'package:todo_app/controllers/controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LogInPage(),
+      home: SignUpPage(),
     );
   }
 }
