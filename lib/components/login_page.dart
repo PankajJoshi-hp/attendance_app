@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/controllers/login_controller.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -10,6 +12,7 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
   bool isPasswordOpen = false;
+  final LoginController loginControl = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +47,7 @@ class _LogInPageState extends State<LogInPage> {
                       ),
                     ),
                     TextFormField(
+                      controller: loginControl.emailController,
                       decoration: InputDecoration(
                           label: Text(
                             'example@gmail.com',
@@ -75,6 +79,7 @@ class _LogInPageState extends State<LogInPage> {
                   ),
                 ),
                 TextFormField(
+                  controller: loginControl.passwordController,
                   obscureText: isPasswordOpen ? false : true,
                   decoration: InputDecoration(
                       label: Text(
@@ -133,7 +138,9 @@ class _LogInPageState extends State<LogInPage> {
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12))),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    loginControl.login(context);
+                  },
                   child: Text(
                     'Login',
                     style: TextStyle(
