@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/signup_controller.dart';
-import 'package:todo_app/main.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -14,6 +12,14 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   // const SignUpPage({super.key});
   final SignupController signupControl = Get.put(SignupController());
+  bool isPasswordVisible = false;
+
+  void handleVisiblity() {
+    setState(() {
+      isPasswordVisible = !isPasswordVisible;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,20 +110,21 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 TextFormField(
                   controller: signupControl.passwordController,
+                  obscureText: isPasswordVisible ? false : true,
                   decoration: InputDecoration(
-                      label: ListTile(
-                        title: Text(
-                          'Enter Your Password',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        trailing: Icon(
-                          Icons.password,
-                          size: 20,
-                          color: Colors.black54,
-                        ),
+                      label: Text(
+                        'Enter Your Password',
+                        style: TextStyle(fontSize: 18),
                       ),
-                      contentPadding:
-                          EdgeInsets.only(top: 24, bottom: 24, left: 10),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          Icons.visibility_off,
+                          size: 20,
+                        ),
+                        onPressed: handleVisiblity,
+                        color: Colors.black54,
+                      ),
+                      contentPadding: EdgeInsets.all(24),
                       focusedBorder: OutlineInputBorder(
                           borderSide:
                               const BorderSide(color: Colors.black54, width: 1),
@@ -254,7 +261,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline),
-                        recognizer: TapGestureRecognizer()..onTap = () {},
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.to(LogInPage());
+                          },
                       ),
                     )
                   ],

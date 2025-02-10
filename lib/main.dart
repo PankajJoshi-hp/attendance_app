@@ -1,9 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_app/components/api_test.dart';
-import 'package:todo_app/components/login_page.dart';
-import 'package:todo_app/components/sign_up_page.dart';
 import 'package:todo_app/controllers/controller.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:todo_app/controllers/login_controller.dart';
+import 'package:todo_app/controllers/signup_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +18,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LogInPage(),
+    return GetMaterialApp(
+      home: HomePage(),
     );
   }
 }
@@ -31,8 +32,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _formKey = GlobalKey<FormState>();
   final Controller todos = Get.find<Controller>();
+  final LoginController loginControl = Get.put(LoginController());
+  final SignupController signupControl = Get.put(SignupController());
+  // FToast? fToast;
 
   openDialogBox(context, todo, isUpdate) {
     showDialog(
@@ -41,7 +44,7 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                   padding: EdgeInsets.all(30),
                   child: Form(
-                    key: _formKey,
+                    key: todos.formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -74,12 +77,22 @@ class _HomePageState extends State<HomePage> {
                         ),
                         TextButton(
                             onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
+                              if (todos.formKey.currentState!.validate()) {
                                 if (isUpdate == true) {
                                   todos.updateTodo(todo.id,
                                       todos.textController.text.trim());
+                                  Fluttertoast.showToast(
+                                      msg: "Todo updated successfully",
+                                      fontSize: 20,
+                                      backgroundColor: Colors.lightGreen,
+                                      gravity: ToastGravity.BOTTOM);
                                 } else {
                                   todos.setText();
+                                  Fluttertoast.showToast(
+                                      msg: "Todo updated successfully",
+                                      fontSize: 20,
+                                      backgroundColor: Colors.lightGreen,
+                                      gravity: ToastGravity.BOTTOM);
                                 }
                                 await todos.saveTodoList(todos.todoList);
                                 Navigator.of(context).pop();
@@ -104,13 +117,35 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Todo".toUpperCase(),
-          style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent),
-        ),
+        title: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "Todo".toUpperCase(),
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent),
+              ),
+              RichText(
+                  text: TextSpan(
+                      text: loginControl.isLoading == false
+                          ? signupControl.isSignedUp == true ||
+                                  loginControl.isLoggedIn == true
+                              ? 'Logout'
+                              : 'Login'
+                          : 'Loading...',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          loginControl.logout();
+                        }))
+            ]),
       ),
       body: Column(
         children: <Widget>[
@@ -175,6 +210,14 @@ class _HomePageState extends State<HomePage> {
                                             todos.deleteTodo(todo.id);
                                             await todos
                                                 .saveTodoList(todos.todoList);
+
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Todo deleted successfully',
+                                                fontSize: 20,
+                                                backgroundColor:
+                                                    Colors.lightGreen,
+                                                gravity: ToastGravity.BOTTOM);
                                           },
                                           child: Icon(Icons.delete,
                                               size: 24, color: Colors.red),

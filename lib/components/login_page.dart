@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:todo_app/components/sign_up_page.dart';
 import 'package:todo_app/controllers/login_controller.dart';
 
 class LogInPage extends StatefulWidget {
@@ -11,8 +13,14 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  bool isPasswordOpen = false;
+  bool isPasswordVisible = false;
   final LoginController loginControl = Get.put(LoginController());
+
+  void handleVisiblity() {
+    setState(() {
+      isPasswordVisible = !isPasswordVisible;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,15 +88,18 @@ class _LogInPageState extends State<LogInPage> {
                 ),
                 TextFormField(
                   controller: loginControl.passwordController,
-                  obscureText: isPasswordOpen ? false : true,
+                  obscureText: isPasswordVisible ? false : true,
                   decoration: InputDecoration(
                       label: Text(
                         'Enter Your Password',
                         style: TextStyle(fontSize: 18),
                       ),
-                      suffixIcon: const Icon(
-                        Icons.visibility_off,
-                        size: 20,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          Icons.visibility_off,
+                          size: 20,
+                        ),
+                        onPressed: handleVisiblity,
                         color: Colors.black54,
                       ),
                       contentPadding: EdgeInsets.all(24),
@@ -180,7 +191,11 @@ class _LogInPageState extends State<LogInPage> {
                   shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12))),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Fluttertoast.showToast(
+                      msg: 'Todo added successfully',
+                      backgroundColor: Colors.lightGreen);
+                },
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -255,7 +270,10 @@ class _LogInPageState extends State<LogInPage> {
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         decoration: TextDecoration.underline),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Get.to(SignUpPage());
+                      },
                   ),
                 )
               ],

@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:todo_app/main.dart';
 
 class SignupController extends GetxController {
-  final String apiUrl = 'https://energyeye.apinext.in/api/customerRegister';
+  final String apiUrl = 'https://hpcrm.apinext.in/api/v1/signup';
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isSignedUp = false;
+
   String result = '';
 
   @override
@@ -22,7 +25,6 @@ class SignupController extends GetxController {
   }
 
   Future<void> postData(context) async {
-    print('*******************');
     try {
       final response = await http.post(Uri.parse(apiUrl),
           headers: {
@@ -31,29 +33,30 @@ class SignupController extends GetxController {
           body: jsonEncode({
             'name': usernameController.text,
             'email': emailController.text,
-            'phone': numberController.text,
+            'mobile': numberController.text,
             'password': passwordController.text,
-            "accepted_terms": 1,
-            "device_token": "xyz"
+            "status": 1,
           }));
       print(response.body);
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         print(responseData);
-
         usernameController.clear();
         emailController.clear();
         numberController.clear();
         passwordController.clear();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        Get.to(HomePage());
+        isSignedUp = true;
+        Fluttertoast.showToast(
+            msg: 'Signed in successfully',
+            backgroundColor: Colors.lightGreen,
+            fontSize: 22);
       } else {
         throw Exception('Failed to post data');
       }
     } catch (e) {
-      result = 'Error: $e';
+      Fluttertoast.showToast(
+          msg: 'Error Signing in', backgroundColor: Colors.red, fontSize: 22);
     }
   }
 }

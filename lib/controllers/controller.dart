@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/reusable_widgets/todo_modal.dart';
 
 class Controller extends GetxController {
+  final formKey = GlobalKey<FormState>();
   String text = 'No todos added';
   var todoList = <Todo>[].obs;
   final TextEditingController textController = TextEditingController();
