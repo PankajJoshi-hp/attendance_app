@@ -134,27 +134,30 @@ class _SignUpPageState extends State<SignUpPage> {
                               const BorderSide(color: Colors.black54, width: 1),
                           borderRadius: BorderRadius.circular(12))),
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.sizeOf(context).height * 0.065,
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll(Color(0XFF0E64D2)),
-                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12))),
-                      ),
-                      onPressed: () {
-                        signupControl.postData(context);
-                      },
-                      child: Text(
-                        'Sign Up',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold),
-                      )),
-                ),
+                Obx(() => SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.sizeOf(context).height * 0.065,
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(Color(0XFF0E64D2)),
+                            shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12))),
+                          ),
+                          onPressed: () {
+                            signupControl.postData(context);
+                          },
+                          child: signupControl.isSignupLoading.value == false
+                              ? Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              : CircularProgressIndicator()),
+                    )),
                 Row(
                   spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.center,

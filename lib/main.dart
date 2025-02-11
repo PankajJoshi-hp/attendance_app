@@ -1,25 +1,32 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/controller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:todo_app/controllers/login_controller.dart';
+import 'package:todo_app/controllers/logout_controller.dart';
 import 'package:todo_app/controllers/signup_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final Controller todos = Get.put(Controller());
   await todos.loadTodoList();
-  runApp(MyApp());
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var get_Token = await prefs.getString('token');
+  print(get_Token);
+  runApp(MyApp(getToken: get_Token));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final getToken;
+  MyApp({required this.getToken});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      home: HomePage(),
+      home: getToken == null ? LogInPage() : HomePage(),
     );
   }
 }
@@ -33,8 +40,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Controller todos = Get.find<Controller>();
-  final LoginController loginControl = Get.put(LoginController());
   final SignupController signupControl = Get.put(SignupController());
+  final LogoutController logoutControl = Get.put(LogoutController());
+  final LoginController loginControl = Get.put(LoginController());
+
   // FToast? fToast;
 
   openDialogBox(context, todo, isUpdate) {
@@ -128,23 +137,20 @@ class _HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent),
               ),
-              RichText(
-                  text: TextSpan(
-                      text: loginControl.isLoading == false
-                          ? signupControl.isSignedUp == true ||
-                                  loginControl.isLoggedIn == true
-                              ? 'Logout'
-                              : 'Login'
-                          : 'Loading...',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          loginControl.logout();
-                        }))
+              Obx(() => logoutControl.isLogoutLoading.value == false
+                  ? RichText(
+                      text: TextSpan(
+                          text: 'Logout',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              logoutControl.logout();
+                            }))
+                  : CircularProgressIndicator())
             ]),
       ),
       body: Column(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/main.dart';
 
 class SignupController extends GetxController {
@@ -11,6 +12,8 @@ class SignupController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final RxBool isSignupLoading = false.obs;
+
   bool isSignedUp = false;
 
   String result = '';
@@ -24,7 +27,13 @@ class SignupController extends GetxController {
     super.dispose();
   }
 
+  Future<void> saveToken(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', value);
+  }
+
   Future<void> postData(context) async {
+    isSignupLoading.value = true;
     try {
       final response = await http.post(Uri.parse(apiUrl),
           headers: {
@@ -39,7 +48,7 @@ class SignupController extends GetxController {
           }));
       print(response.body);
       if (response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
+        final responseData = jsonDecode(response.body.toString());
         print(responseData);
         usernameController.clear();
         emailController.clear();
@@ -47,6 +56,8 @@ class SignupController extends GetxController {
         passwordController.clear();
         Get.to(HomePage());
         isSignedUp = true;
+        print(responseData['token']);
+        saveToken(responseData['token']);
         Fluttertoast.showToast(
             msg: 'Signed in successfully',
             backgroundColor: Colors.lightGreen,
@@ -57,6 +68,8 @@ class SignupController extends GetxController {
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Error Signing in', backgroundColor: Colors.red, fontSize: 22);
+    } finally {
+      isSignupLoading.value = false;
     }
   }
 }

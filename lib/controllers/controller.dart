@@ -9,6 +9,7 @@ class Controller extends GetxController {
   String text = 'No todos added';
   var todoList = <Todo>[].obs;
   final TextEditingController textController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   Future<void> saveTodoList(List<Todo> todoList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
