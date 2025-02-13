@@ -1,18 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/controller.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:todo_app/controllers/login_controller.dart';
+import 'package:todo_app/controllers/deviceStatusController.dart';
 import 'package:todo_app/controllers/logout_controller.dart';
-import 'package:todo_app/controllers/signup_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final Controller todos = Get.put(Controller());
-  await todos.loadTodoList();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var get_Token = await prefs.getString('token');
   print(get_Token);
@@ -39,88 +37,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Controller todos = Get.find<Controller>();
-  final SignupController signupControl = Get.put(SignupController());
-  final LogoutController logoutControl = Get.put(LogoutController());
-  final LoginController loginControl = Get.put(LoginController());
-
-  // FToast? fToast;
-
-  openDialogBox(context, todo, isUpdate) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => Dialog(
-              child: Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Form(
-                    key: todos.formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        TextFormField(
-                          maxLines: 3,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Text field cannot be empty';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) => todos.text = value,
-                          controller: todos.textController,
-                          decoration: InputDecoration(
-                            label: Text(
-                              'Enter your task here...',
-                              style: TextStyle(color: Colors.lightGreen),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Colors.lightGreen, width: 2),
-                                borderRadius: BorderRadius.circular(5)),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Colors.lightGreen, width: 2),
-                                borderRadius: BorderRadius.circular(5)),
-                          ),
-                        ),
-                        TextButton(
-                            onPressed: () async {
-                              if (todos.formKey.currentState!.validate()) {
-                                if (isUpdate == true) {
-                                  todos.updateTodo(todo.id,
-                                      todos.textController.text.trim());
-                                  Fluttertoast.showToast(
-                                      msg: "Todo updated successfully",
-                                      fontSize: 20,
-                                      backgroundColor: Colors.lightGreen,
-                                      gravity: ToastGravity.BOTTOM);
-                                } else {
-                                  todos.setText();
-                                  Fluttertoast.showToast(
-                                      msg: "Todo updated successfully",
-                                      fontSize: 20,
-                                      backgroundColor: Colors.lightGreen,
-                                      gravity: ToastGravity.BOTTOM);
-                                }
-                                await todos.saveTodoList(todos.todoList);
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStatePropertyAll(Colors.lightGreen),
-                                shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5)))),
-                            child: Text('Submit'.toUpperCase(),
-                                style: TextStyle(color: Colors.white)))
-                      ],
-                    ),
-                  )),
-            ));
-  }
+  LogoutController logoutControl = Get.put(LogoutController());
+  Controller reportControl = Get.put(Controller());
+  DeviceStatusController deviceInfoControl = Get.put(DeviceStatusController());
+  String? selectedButton;
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +50,33 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                "Todo".toUpperCase(),
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent),
+              Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 24,
+                    child: Image.asset('assets/images/human.png'),
+                  ),
+                  SizedBox(width: 12),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Hello,',
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        Text(
+                          'Test User...',
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500),
+                        )
+                      ]),
+                ],
               ),
               Obx(() => logoutControl.isLogoutLoading.value == false
                   ? RichText(
@@ -153,99 +94,130 @@ class _HomePageState extends State<HomePage> {
                   : CircularProgressIndicator())
             ]),
       ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            color: Colors.black,
-            height: 1,
-          ),
-          Obx(() => Expanded(
-                child: todos.todoList.isEmpty
-                    ? Center(
-                        child: Text(
-                          'Please add some todos 🤧.',
-                          style: TextStyle(fontSize: 20, color: Colors.black87),
-                        ),
-                      )
-                    : ListView(
-                        children: todos.todoList
-                            .map((todo) => Card(
-                                child: ListTile(
-                                    leading: Checkbox(
-                                      activeColor: Colors.lightBlue,
-                                      value: todo.isCompleted,
-                                      onChanged: (_) async {
-                                        todos.toggleTodoStatus(todo.id);
-                                        await todos
-                                            .saveTodoList(todos.todoList);
-                                      },
-                                    ),
-                                    title: todo.isCompleted == false
-                                        ? Text(
-                                            todo.title,
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.black),
-                                          )
-                                        : Text(
-                                            todo.title,
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                            ),
-                                          ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      spacing: 5,
-                                      children: <Widget>[
-                                        todo.isCompleted == false
-                                            ? InkWell(
-                                                onTap: () {
-                                                  todos.textController.text =
-                                                      todo.title;
-                                                  openDialogBox(
-                                                      context, todo, true);
-                                                },
-                                                child: Icon(Icons.edit,
-                                                    size: 24,
-                                                    color: Colors.lightBlue))
-                                            : Text(''),
-                                        InkWell(
-                                          onTap: () async {
-                                            todos.deleteTodo(todo.id);
-                                            await todos
-                                                .saveTodoList(todos.todoList);
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: reportControl.reportButtons
+                  .map((button) => GestureDetector(
+                        onTap: () {
+                          if (button['id'] != 2) {
+                            reportControl.focusTextField(context);
+                            selectedButton = button['type'];
+                          } else {
+                            selectedButton = null;
+                          }
+                          // controller
+                          //     .updateReport(controller.reportController.text);
+                          print("${button['type']} Clicked");
+                          // controller.selectedId = button['id'];
 
-                                            Fluttertoast.showToast(
-                                                msg:
-                                                    'Todo deleted successfully',
-                                                fontSize: 20,
-                                                backgroundColor:
-                                                    Colors.lightGreen,
-                                                gravity: ToastGravity.BOTTOM);
-                                          },
-                                          child: Icon(Icons.delete,
-                                              size: 24, color: Colors.red),
-                                        ),
-                                      ],
-                                    ))))
-                            .toList()),
-              )),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.lightBlue,
-        onPressed: () {
-          todos.textController.clear();
-          openDialogBox(context, null, false);
-        },
-        child: const Text(
-          '+',
-          style: TextStyle(
-              fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87),
+                          setState(() {});
+                        },
+                        child: Container(
+                          width: 160,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: button['background_color'],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(button['icon'],
+                                  size: 40, color: Colors.white),
+                              SizedBox(height: 8),
+                              Text(button['type'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+            TextButton(
+              onPressed: () async {
+                print('###########################');
+                deviceInfoControl.getDeviceInfo();
+                await deviceInfoControl.getCurrentLocation();
+                deviceInfoControl.getNetworkInfo();
+              },
+              child: Text(
+                  "Latitude = ${deviceInfoControl.currentLocation?.latitude} ; Longitude = ${deviceInfoControl.currentLocation?.longitude}; ${deviceInfoControl.infoObject['wifi_name']}"),
+            )
+          ],
         ),
       ),
+      bottomNavigationBar: selectedButton == null
+          ? SizedBox.shrink()
+          : Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Form(
+                        child: TextFormField(
+                          focusNode: reportControl.focusNode,
+                          controller: reportControl.reportController,
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Enter Your Text Here..',
+                            hintStyle:
+                                TextStyle(fontSize: 16, color: Colors.grey),
+                            contentPadding: EdgeInsets.all(18),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0XFF8B0000), width: 1),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0XFF8B0000), width: 2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black54, width: 1),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black54, width: 1),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: EdgeInsets.all(15),
+                      child: IconButton(
+                          onPressed: () {
+                            // print(jsonEncode(deviceInfoControl.infoObject));
+                            // print('------------------------------');
+                            reportControl.sendReport(selectedButton);
+                          },
+                          icon: Icon(Icons.send_rounded,
+                              size: 30, color: Colors.white)),
+                    )
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

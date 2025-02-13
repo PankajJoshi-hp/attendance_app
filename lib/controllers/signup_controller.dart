@@ -13,6 +13,7 @@ class SignupController extends GetxController {
   final TextEditingController numberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final RxBool isSignupLoading = false.obs;
+  final formKey = GlobalKey<FormState>();
 
   bool isSignedUp = false;
 

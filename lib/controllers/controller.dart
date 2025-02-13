@@ -1,65 +1,109 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/components/login_page.dart';
+import 'package:todo_app/controllers/deviceStatusController.dart';
 import 'package:todo_app/reusable_widgets/todo_modal.dart';
 
 class Controller extends GetxController {
+  final String apiUrl = 'https://hpcrm.apinext.in/api/v1/users/report';
   final formKey = GlobalKey<FormState>();
-  String text = 'No todos added';
-  var todoList = <Todo>[].obs;
+  // String text = 'No todos added';
   final TextEditingController textController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController reportController = TextEditingController();
+  // final TextEditingController standupController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+  DeviceStatusController deviceInfoControl = Get.put(DeviceStatusController());
 
-  Future<void> saveTodoList(List<Todo> todoList) async {
+  List<Map<String, dynamic>> reportButtons = [
+    {
+      'id': 1,
+      'type': 'STANDUP',
+      'icon': Icons.timer_outlined,
+      'background_color': Colors.lightBlue
+    },
+    {
+      'id': 2,
+      'type': 'BREAK',
+      'icon': Icons.lunch_dining,
+      'background_color': Colors.lightGreen
+    },
+    {
+      'id': 3,
+      'type': 'REPORT',
+      'icon': Icons.description,
+      'background_color': Colors.redAccent
+    }
+  ];
+
+  @override
+  void dispose() {
+    reportController.dispose();
+    super.dispose();
+  }
+
+  void focusTextField(context) {
+    FocusScope.of(context).requestFocus(focusNode);
+  }
+
+  Future<void> sendReport(selectedButtonType) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> jsonStringList =
-        todoList.map((todo) => jsonEncode(todo.toJson())).toList();
-    await prefs.setStringList('todo_list', jsonStringList);
-  }
+    var get_Token = await prefs.getString('token');
+    print('=============================');
+    try {
+      final response = await http.post(Uri.parse(apiUrl),
+          body: jsonEncode({
+            'report_type': selectedButtonType,
+            'report_description': reportController.text,
+            'device_info':deviceInfoControl.infoObject,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Cookie": 'token=$get_Token'
+          });
+      print('------------------------------');
 
-  Future<void> loadTodoList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? jsonStringList = prefs.getStringList('todo_list');
-    if (jsonStringList != null) {
-      todoList.assignAll(jsonStringList
-          .map((jsonString) => Todo.fromJson(jsonDecode(jsonString))));
+      print(response.body);
+      print('------------------------------');
+
+      print(response.statusCode);
+
+      if (response.statusCode == 201) {
+        reportController.clear();
+        var data = jsonDecode(response.body.toString());
+        print(data);
+        Fluttertoast.showToast(
+            msg: 'Report sent Successfully',
+            backgroundColor: Colors.lightGreen,
+            fontSize: 16);
+      } else if (response.statusCode == 401) {
+        Fluttertoast.showToast(
+          msg: 'Authorization failed',
+          backgroundColor: Colors.redAccent,
+          fontSize: 16,
+        );
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.remove('token');
+        Get.to(LogInPage());
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Please contact HR to complete your profile.',
+          backgroundColor: Colors.redAccent,
+          fontSize: 16,
+        );
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
-  void setText() async {
-    String newText = textController.text.trim();
-    if (newText.isNotEmpty) {
-      todoList.add(Todo(id: DateTime.now().toString(), title: newText));
-      textController.clear();
-      await saveTodoList(todoList);
-    }
-  }
-
-  void updateTodo(String id, String newTitle) async {
-    final index = todoList.indexWhere((todo) => todo.id == id);
-    if (index != -1) {
-      todoList[index] = Todo(id: id, title: newTitle);
-    }
-    textController.clear();
-    await saveTodoList(todoList);
-  }
-
-  void toggleTodoStatus(
-    String id,
-  ) async {
-    final index = todoList.indexWhere((todo) => todo.id == id);
-    if (index != -1) {
-      todoList[index] = Todo(
-          id: id,
-          title: todoList[index].title,
-          isCompleted: !todoList[index].isCompleted);
-      await saveTodoList(todoList);
-    }
-  }
-
-  void deleteTodo(String id) async {
-    todoList.removeWhere((todo) => todo.id == id);
-    await saveTodoList(todoList);
+  void updateReport(String text) {
+    reportController.text = text;
+    reportController.selection = TextSelection.fromPosition(
+      TextPosition(offset: reportController.text.length), // Move cursor to end
+    );
   }
 }

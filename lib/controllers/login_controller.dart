@@ -13,6 +13,8 @@ class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final RxBool isLoginLoading = false.obs;
+    final formKey = GlobalKey<FormState>();
+
 
   bool isLoggedIn = false;
 

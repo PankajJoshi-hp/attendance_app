@@ -33,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               spacing: 30,
               children: <Widget>[
-                SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
+                SizedBox(height: MediaQuery.sizeOf(context).height * 0.04),
                 Container(
                   child: Column(
                     children: <Widget>[
@@ -61,9 +61,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     decoration: InputDecoration(
                         label: Text(
                           'Enter your username',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(fontSize: 16),
                         ),
-                        contentPadding: EdgeInsets.all(24),
+                        contentPadding: EdgeInsets.all(22),
                         focusedBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
                                 color: Colors.black54, width: 1),
@@ -79,9 +79,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                       label: Text(
                         'Enter Your Email',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 16),
                       ),
-                      contentPadding: EdgeInsets.all(24),
+                      contentPadding: EdgeInsets.all(22),
                       focusedBorder: OutlineInputBorder(
                           borderSide:
                               const BorderSide(color: Colors.black54, width: 1),
@@ -96,9 +96,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                       label: Text(
                         'Enter Your Phone Number',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 16),
                       ),
-                      contentPadding: EdgeInsets.all(24),
+                      contentPadding: EdgeInsets.all(22),
                       focusedBorder: OutlineInputBorder(
                           borderSide:
                               const BorderSide(color: Colors.black54, width: 1),
@@ -114,7 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                       label: Text(
                         'Enter Your Password',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 16),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -124,7 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         onPressed: handleVisiblity,
                         color: Colors.black54,
                       ),
-                      contentPadding: EdgeInsets.all(24),
+                      contentPadding: EdgeInsets.all(22),
                       focusedBorder: OutlineInputBorder(
                           borderSide:
                               const BorderSide(color: Colors.black54, width: 1),
@@ -153,96 +153,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                   'Sign Up',
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 24,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold),
                                 )
                               : CircularProgressIndicator()),
                     )),
-                Row(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Container(
-                      color: Colors.black,
-                      width: MediaQuery.sizeOf(context).width * 0.2,
-                      height: 1,
-                    ),
-                    Text(
-                      'Or With',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    Container(
-                      color: Colors.black,
-                      width: MediaQuery.sizeOf(context).width * 0.2,
-                      height: 1,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.sizeOf(context).height * 0.065,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(Color(0XFF0E64D2)),
-                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12))),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      spacing: 30,
-                      children: <Widget>[
-                        Icon(
-                          Icons.facebook,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          'Signup with facebook',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.sizeOf(context).height * 0.065,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(Colors.white),
-                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12))),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      spacing: 30,
-                      children: <Widget>[
-                        Image.asset(
-                          'assets/images/google.png',
-                          width: 30,
-                          height: 30,
-                        ),
-                        Text(
-                          'Signup with Google',
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
