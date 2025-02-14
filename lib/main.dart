@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/components/break_page.dart';
 import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/controller.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
@@ -108,6 +109,7 @@ class _HomePageState extends State<HomePage> {
                             selectedButton = button['type'];
                           } else {
                             selectedButton = null;
+                            Get.to(BreakPage());
                           }
                           // controller
                           //     .updateReport(controller.reportController.text);
@@ -158,12 +160,13 @@ class _HomePageState extends State<HomePage> {
               padding: MediaQuery.of(context).viewInsets,
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                 child: Row(
                   children: [
                     Expanded(
                       child: Form(
                         child: TextFormField(
+                          // maxLines: 2,
                           focusNode: reportControl.focusNode,
                           controller: reportControl.reportController,
                           onTapOutside: (event) {
@@ -173,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                             hintText: 'Enter Your Text Here..',
                             hintStyle:
                                 TextStyle(fontSize: 16, color: Colors.grey),
-                            contentPadding: EdgeInsets.all(18),
+                            contentPadding: EdgeInsets.all(20),
                             errorBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color(0XFF8B0000), width: 1),
@@ -204,7 +207,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.blue,
                         shape: BoxShape.circle,
                       ),
-                      padding: EdgeInsets.all(15),
+                      padding: EdgeInsets.all(10),
                       child: IconButton(
                           onPressed: () {
                             // print(jsonEncode(deviceInfoControl.infoObject));
@@ -212,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                             reportControl.sendReport(selectedButton);
                           },
                           icon: Icon(Icons.send_rounded,
-                              size: 30, color: Colors.white)),
+                              size: 32, color: Colors.white)),
                     )
                   ],
                 ),
