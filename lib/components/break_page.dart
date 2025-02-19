@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/controllers/break_controller.dart';
+import 'package:todo_app/reusable_widgets/app_colors.dart';
 
 class BreakPage extends StatefulWidget {
   const BreakPage({super.key});
@@ -25,7 +26,7 @@ class _BreakPageState extends State<BreakPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.redAccent,
+          backgroundColor: AppColors.red,
           title: Text(
             'Break'.toUpperCase(),
             style: TextStyle(
@@ -49,7 +50,7 @@ class _BreakPageState extends State<BreakPage> {
                                               breaks['name'].toUpperCase(),
                                               style: TextStyle(
                                                   fontSize: 18,
-                                                  color: Colors.black87,
+                                                  // color: Colors.black87,
                                                   fontWeight: FontWeight.w500),
                                               // style: TextStyle(color: Colors.white),
                                             ),
@@ -66,9 +67,9 @@ class _BreakPageState extends State<BreakPage> {
                                                 backgroundColor: breaksId !=
                                                         breaks['_id']
                                                     ? WidgetStatePropertyAll(
-                                                        Colors.lightGreen)
+                                                        AppColors.lightGreen)
                                                     : WidgetStatePropertyAll(
-                                                        Colors.red),
+                                                        AppColors.red),
                                                 shape: WidgetStatePropertyAll(
                                                     RoundedRectangleBorder(
                                                         borderRadius:

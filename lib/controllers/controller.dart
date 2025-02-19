@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
+import 'package:todo_app/reusable_widgets/app_colors.dart';
 import 'package:todo_app/reusable_widgets/todo_modal.dart';
 
 class Controller extends GetxController {
@@ -25,19 +26,19 @@ class Controller extends GetxController {
       'id': 1,
       'type': 'STANDUP',
       'icon': Icons.timer_outlined,
-      'background_color': Colors.lightBlue
+      'background_color': AppColors.lightBlue
     },
     {
       'id': 2,
       'type': 'BREAK',
       'icon': Icons.lunch_dining,
-      'background_color': Colors.lightGreen
+      'background_color': AppColors.lightGreen
     },
     {
       'id': 3,
       'type': 'REPORT',
       'icon': Icons.description,
-      'background_color': Colors.redAccent
+      'background_color': AppColors.redAccent
     }
   ];
 

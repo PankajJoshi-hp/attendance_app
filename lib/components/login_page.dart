@@ -55,9 +55,9 @@ class _LogInPageState extends State<LogInPage> {
                           child: Text(
                             'Email',
                             style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black54),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         TextFormField(
@@ -79,17 +79,20 @@ class _LogInPageState extends State<LogInPage> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Color(0XFF8B0000), width: 2),
-                                    borderRadius: BorderRadius.circular(12)
-                              ),
-                              focusedBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
-                                      color: Colors.black54, width: 1),
+                                      color: Color(0XFF8B0000), width: 2),
+                                  borderRadius: BorderRadius.circular(12)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      width: 1),
                                   borderRadius: BorderRadius.circular(12)),
                               enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.black54, width: 1),
+                                  borderSide: BorderSide(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      width: 1),
                                   borderRadius: BorderRadius.circular(12))),
                         ),
                       ],
@@ -102,9 +105,9 @@ class _LogInPageState extends State<LogInPage> {
                       child: Text(
                         'Password',
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black54),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     TextFormField(
@@ -132,22 +135,23 @@ class _LogInPageState extends State<LogInPage> {
                           ),
                           contentPadding: EdgeInsets.all(22),
                           errorBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Color(0XFF8B0000), width: 1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Color(0XFF8B0000), width: 2),
-                                    borderRadius: BorderRadius.circular(12)
-                              ),
-                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color(0XFF8B0000), width: 1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
-                                  color: Colors.black54, width: 1),
+                                  color: Color(0XFF8B0000), width: 2),
+                              borderRadius: BorderRadius.circular(12)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 1),
                               borderRadius: BorderRadius.circular(12)),
                           enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.black54, width: 1),
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 1),
                               borderRadius: BorderRadius.circular(12))),
                     ),
                   ],
@@ -207,7 +211,9 @@ class _LogInPageState extends State<LogInPage> {
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold),
                                 )
-                              : CircularProgressIndicator(color: Colors.white,)),
+                              : CircularProgressIndicator(
+                                  color: Colors.white,
+                                )),
                     )),
 
                 Spacer(

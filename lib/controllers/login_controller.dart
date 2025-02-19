@@ -48,7 +48,7 @@ class LoginController extends GetxController {
         var data = jsonDecode(response.body.toString());
         emailController.clear();
         passwordController.clear();
-        Get.to(HomePage());
+        // Get.to(HomePage());
         isLoggedIn = true;
         print(data['token']);
         saveToken(data['token']);
