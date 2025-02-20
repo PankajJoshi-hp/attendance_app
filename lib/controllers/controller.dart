@@ -36,7 +36,7 @@ class Controller extends GetxController {
     },
     {
       'id': 3,
-      'type': 'REPORT',
+      'type': 'EODREPORT',
       'icon': Icons.description,
       'background_color': AppColors.redAccent
     }

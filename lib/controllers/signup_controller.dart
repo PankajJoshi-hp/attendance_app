@@ -55,7 +55,7 @@ class SignupController extends GetxController {
         emailController.clear();
         numberController.clear();
         passwordController.clear();
-        // Get.to(HomePage());
+        Get.to(HomePage());
         isSignedUp = true;
         print(responseData['token']);
         saveToken(responseData['token']);
