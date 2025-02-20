@@ -37,35 +37,39 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> signInWithGoogle() async {
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
       final GoogleSignInAccount? googleSignInAccount =
           await googleSignIn.signIn();
 
       if (googleSignInAccount == null) {
         print("User canceled the sign-in");
-        return; // User canceled login
+        return;
       }
-      print('**********');
+      print(googleSignInAccount);
+      // final GoogleSignInAuthentication googleSignInAuthentication =
+      //     await googleSignInAccount.authentication;
 
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+      // final AuthCredential authCredential = GoogleAuthProvider.credential(
+      //   idToken: googleSignInAuthentication.idToken,
+      //   accessToken: googleSignInAuthentication.accessToken,
+      // );
 
-      final AuthCredential authCredential = GoogleAuthProvider.credential(
-        idToken: googleSignInAuthentication.idToken,
-        accessToken: googleSignInAuthentication.accessToken,
-      );
+      // UserCredential result = await auth.signInWithCredential(authCredential);
+      // User? user = result.user;
 
-      UserCredential result = await auth.signInWithCredential(authCredential);
-      User? user = result.user;
-
-      if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LogInPage()),
-        );
-      }
+      // if (user != null) {
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => LogInPage()),
+      // );
+      // } else {
+      //   print("Sign-in failed: User is null.");
+      // }
     } catch (e) {
-      print("Error signing in: $e");
+      print("Error signing in with Google: $e");
+      if (e is FirebaseAuthException) {
+        print("Firebase Auth Error: ${e.message}");
+      }
     }
   }
 
