@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,20 +8,21 @@ import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/controller.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
 import 'package:todo_app/controllers/logout_controller.dart';
+import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/language_control/translate.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
 import 'package:todo_app/reusable_widgets/push_notification_service.dart';
+// import 'package:pushnotitutefinal/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PushNotificationService().initNotifications();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var get_Token = await prefs.getString('token');
   print(get_Token);
   runApp(MyApp(getToken: get_Token));
 }
-
 
 class MyApp extends StatefulWidget {
   final getToken;
@@ -35,9 +34,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
-    final PushNotificationService _notificationService = PushNotificationService();
-
-
+  final PushNotificationService _notificationService =
+      PushNotificationService();
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +74,24 @@ class _HomePageState extends State<HomePage> {
   Controller reportControl = Get.put(Controller());
   DeviceStatusController deviceInfoControl = Get.put(DeviceStatusController());
   String? selectedButton;
+  String _lastMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    PushNotificationService.messageStreamController.listen((message) {
+      setState(() {
+        if (message.notification != null) {
+          _lastMessage = 'Received a notification message:'
+              '\nTitle=${message.notification?.title},'
+              '\nBody=${message.notification?.body},'
+              '\nData=${message.data}';
+        } else {
+          _lastMessage = 'Received a data message: ${message.data}';
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +129,6 @@ class _HomePageState extends State<HomePage> {
                       ]),
                 ],
               ),
-
               DropdownButton(
                 value: list.any((lang) => lang['language'] == Get.locale)
                     ? Get.locale
@@ -130,7 +145,6 @@ class _HomePageState extends State<HomePage> {
                   );
                 }).toList(),
               ),
-
               Obx(() => logoutControl.isLogoutLoading.value == false
                   ? Text.rich(TextSpan(
                       text: 'Logout'.tr,
@@ -166,7 +180,6 @@ class _HomePageState extends State<HomePage> {
                           //     .updateReport(controller.reportController.text);
                           print("${button['type']} Clicked");
                           // controller.selectedId = button['id'];
-
                           setState(() {});
                         },
                         child: Container(
@@ -192,16 +205,19 @@ class _HomePageState extends State<HomePage> {
                       ))
                   .toList(),
             ),
-            TextButton(
-              onPressed: () async {
-                print('###########################');
-                deviceInfoControl.getDeviceInfo();
-                await deviceInfoControl.getCurrentLocation();
-                deviceInfoControl.getNetworkInfo();
-              },
-              child: Text(
-                  "Latitude = ${deviceInfoControl.currentLocation?.latitude} ; Longitude = ${deviceInfoControl.currentLocation?.longitude}; ${deviceInfoControl.infoObject['wifi_name']}"),
-            ),
+            // TextButton(
+            //   onPressed: () async {
+            //     print('###########################');
+            //     deviceInfoControl.getDeviceInfo();
+            //     await deviceInfoControl.getCurrentLocation();
+            //     deviceInfoControl.getNetworkInfo();
+            //   },
+            //   child: Text(
+            //       "Latitude = ${deviceInfoControl.currentLocation?.latitude} ; Longitude = ${deviceInfoControl.currentLocation?.longitude}; ${deviceInfoControl.infoObject['wifi_name']}"),
+            // ),
+            Text('Last message from Firebase Messaging:',
+                style: Theme.of(context).textTheme.titleLarge),
+            Text(_lastMessage, style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
       ),
@@ -259,7 +275,7 @@ class _HomePageState extends State<HomePage> {
                           },
                           icon: Icon(Icons.send_rounded,
                               size: 32, color: Colors.white)),
-                    )
+                    ),
                   ],
                 ),
               ),
