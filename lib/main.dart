@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/break_page.dart';
@@ -12,16 +16,39 @@ import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/language_control/translate.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
 import 'package:todo_app/reusable_widgets/push_notification_service.dart';
+import 'package:http/http.dart' as http;
 // import 'package:pushnotitutefinal/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PushNotificationService().initNotifications();
+  await setupFlutterNotifications();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var get_Token = await prefs.getString('token');
   print(get_Token);
   runApp(MyApp(getToken: get_Token));
+}
+
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+Future<void> setupFlutterNotifications() async {
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    description: 'This channel is used for important notifications.',
+    importance: Importance.high,
+  );
+
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+}
+
+void showFlutterNotification(RemoteMessage message) {
+  // Show local notifications here using flutterLocalNotificationsPlugin
 }
 
 class MyApp extends StatefulWidget {
@@ -91,6 +118,24 @@ class _HomePageState extends State<HomePage> {
         }
       });
     });
+  }
+
+  Future<void> sendPushMessage(String token) async {
+    final response = await http.post(
+      Uri.parse('https://fcm.googleapis.com/fcm/send'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=YOUR_SERVER_KEY',
+      },
+      body: jsonEncode({
+        'to': token,
+        'data': {
+          'title': 'Hello Flutter!',
+          'body': 'This is a test notification.',
+        },
+      }),
+    );
+    print('FCM request sent! Response: ${response.body}');
   }
 
   @override
@@ -218,6 +263,14 @@ class _HomePageState extends State<HomePage> {
             Text('Last message from Firebase Messaging:',
                 style: Theme.of(context).textTheme.titleLarge),
             Text(_lastMessage, style: Theme.of(context).textTheme.bodyLarge),
+
+            TextButton(
+              onPressed: () {
+                sendPushMessage(
+                    'eR7nrTc_TGyzdFomDxgJC9:APA91bFOKmZ_K7JNGjIL7mTtAYmw2EaVl6yWihpJdTduP_sxWgjMWisolnaV7dp4ahm91f0_p8G_ZYSiytz8FAoh7UP5XeR1Yy-BxuIyOv_-S_hndGJe8I4');
+              },
+              child: Text('Click Me'),
+            )
           ],
         ),
       ),
