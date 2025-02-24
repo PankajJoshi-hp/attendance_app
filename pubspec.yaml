@@ -54,6 +54,7 @@ dependencies:
   firebase_messaging: ^15.2.3
   rxdart: ^0.28.0
   flutter_local_notifications: ^18.0.1
+  smooth_page_indicator: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +83,9 @@ flutter:
     #   - images/a_dot_ham.jpeg
     - assets/images/google.png
     - assets/images/human.png
+    - assets/images/Ellips.png
+    - assets/images/Ellipse.png
+    - assets/images/Object.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
