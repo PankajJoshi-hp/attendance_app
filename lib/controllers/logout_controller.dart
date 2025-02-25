@@ -8,6 +8,7 @@ import 'package:todo_app/components/login_page.dart';
 class LogoutController extends GetxController {
   final String apiUrl = 'https://hpcrm.apinext.in/api/v1/logout';
   final RxBool isLogoutLoading = false.obs;
+  final bool isLoggedOut = false;
 
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -30,7 +31,9 @@ class LogoutController extends GetxController {
       if (response.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.remove('token');
-        Get.to(LogInPage());
+        Get.off(LogInPage());
+        final prefsBool = await SharedPreferences.getInstance();
+        prefsBool.setBool('isLoggedOut', true);
       } else {
         // print('error logging out');
         Fluttertoast.showToast(

@@ -1,15 +1,9 @@
-import 'dart:convert';
-
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/break_page.dart';
-import 'package:todo_app/components/login_page.dart';
-import 'package:todo_app/components/onboarding_one.dart';
 import 'package:todo_app/components/splash_screen.dart';
 import 'package:todo_app/controllers/controller.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
@@ -18,17 +12,17 @@ import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/language_control/translate.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
 import 'package:todo_app/reusable_widgets/push_notification_service.dart';
-import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PushNotificationService().initNotifications();
-  // await setupFlutterNotifications();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var get_Token = prefs.getString('token');
-  print(get_Token);
-  runApp(MyApp(getToken: get_Token));
+  runApp(MyApp(
+    getToken: get_Token,
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -41,19 +35,59 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final ThemeMode _themeMode = ThemeMode.system;
+  Locale _locale = Locale('en', 'US'); 
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocale();
+  }
+
+  Future<void> _loadLocale() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var savedLocale = prefs.getString('savedLang');
+    setState(() {
+      _locale = _getLocale(savedLocale);
+      isLoading = false;
+    });
+  }
+
+  Locale _getLocale(String? savedLocale) {
+    if (savedLocale == 'hi_IN') {
+      return Locale('hi', 'IN');
+    } else if (savedLocale == 'ar_AE') {
+      return Locale('ar', 'AE');
+    } else {
+      return Locale('en', 'US');
+    }
+  }
+
+  void updateLocale(Locale newLocale) {
+    setState(() {
+      _locale = newLocale;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      translations: Translate(), // your translations
-      locale: Get.deviceLocale,
-      theme: ThemeData(primarySwatch: Colors.green),
-      darkTheme: ThemeData.dark(),
-      themeMode: _themeMode,
-      // home: widget.getToken == null ? LogInPage() : HomePage(),
-      home: PageViewExample(),
-      // (toggleTheme: toggleTheme),
-    );
+    return isLoading
+        ? MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          )
+        : GetMaterialApp(
+            translations: Translate(),
+            locale: _locale,
+            fallbackLocale: Locale('en', 'US'),
+            theme: ThemeData(primarySwatch: Colors.green),
+            darkTheme: ThemeData.dark(),
+            themeMode: _themeMode,
+            home: SplashScreen(),
+          );
   }
 }
 
@@ -134,12 +168,21 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               DropdownButton(
-                value: list.any((lang) => lang['language'] == Get.locale)
-                    ? Get.locale
-                    : Locale('en', 'US'),
-                onChanged: (Locale? newValue) {
+                value: Get.locale ??
+                    Locale(
+                        'en', 'US'), 
+                onChanged: (Locale? newValue) async {
                   if (newValue != null) {
                     Get.updateLocale(newValue);
+
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setString('savedLang', newValue.toString());
+
+                    final myAppState =
+                        context.findAncestorStateOfType<_MyAppState>();
+                    if (myAppState != null) {
+                      myAppState.updateLocale(newValue);
+                    }
                   }
                 },
                 items: list.map<DropdownMenuItem<Locale>>((lang) {
@@ -209,18 +252,8 @@ class _HomePageState extends State<HomePage> {
                       ))
                   .toList(),
             ),
-            // TextButton(
-            //   onPressed: () async {
-            //     print('###########################');
-            //     deviceInfoControl.getDeviceInfo();
-            //     await deviceInfoControl.getCurrentLocation();
-            //     deviceInfoControl.getNetworkInfo();
-            //   },
-            //   child: Text(
-            //       "Latitude = ${deviceInfoControl.currentLocation?.latitude} ; Longitude = ${deviceInfoControl.currentLocation?.longitude}; ${deviceInfoControl.infoObject['wifi_name']}"),
-            // ),
-            Text('Last message from Firebase Messaging:',
-                style: Theme.of(context).textTheme.titleLarge),
+            // Text('Last message from Firebase Messaging:',
+            //     style: Theme.of(context).textTheme.titleLarge),
             Text(_lastMessage, style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),

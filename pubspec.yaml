@@ -86,6 +86,8 @@ flutter:
     - assets/images/Ellips.png
     - assets/images/Ellipse.png
     - assets/images/Object.png
+    - assets/images/Object2.png
+    - assets/images/Object3.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

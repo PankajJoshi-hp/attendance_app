@@ -229,7 +229,6 @@ class _LogInPageState extends State<LogInPage> {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black54,
                           decoration: TextDecoration.underline),
                     ),
                     RichText(

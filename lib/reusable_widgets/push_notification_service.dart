@@ -1,16 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  print('Title: ${message.notification?.title}');
+  print('Body: ${message.notification?.body}');
+  print('Payload: ${message.data}');
+}
+
 class PushNotificationService {
   final _firebaseMessaging = FirebaseMessaging.instance;
- static final messageStreamController = BehaviorSubject<RemoteMessage>();
-
-  Future<void> handleBackgroundMessage(RemoteMessage message) async {
-    print('Title: ${message.notification?.title}');
-    print('Body: ${message.notification?.body}');
-    print('Payload: ${message.data}');
-  }
+  static final messageStreamController = BehaviorSubject<RemoteMessage>();
 
   Future<void> initNotifications() async {
     final settings = await _firebaseMessaging.requestPermission(
@@ -23,7 +24,6 @@ class PushNotificationService {
       sound: true,
     );
 
-
     if (kDebugMode) {
       print('Permission granted: ${settings.authorizationStatus}');
     }
@@ -32,15 +32,15 @@ class PushNotificationService {
     print('token: $fcmToken');
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
 
-     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-   if (kDebugMode) {
-     print('Handling a foreground message: ${message.messageId}');
-     print('Message data: ${message.data}');
-     print('Message notification: ${message.notification?.title}');
-     print('Message notification: ${message.notification?.body}');
-   }
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (kDebugMode) {
+        print('Handling a foreground message: ${message.messageId}');
+        print('Message data: ${message.data}');
+        print('Message notification: ${message.notification?.title}');
+        print('Message notification: ${message.notification?.body}');
+      }
 
-   messageStreamController.sink.add(message);
- });
+      messageStreamController.sink.add(message);
+    });
   }
 }

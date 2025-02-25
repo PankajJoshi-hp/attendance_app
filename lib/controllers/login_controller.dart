@@ -13,8 +13,7 @@ class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final RxBool isLoginLoading = false.obs;
-    final formKey = GlobalKey<FormState>();
-
+  final formKey = GlobalKey<FormState>();
 
   bool isLoggedIn = false;
 
@@ -40,7 +39,6 @@ class LoginController extends GetxController {
           body: jsonEncode({
             'email': emailController.text,
             'password': passwordController.text
-
           }),
           headers: {"Content-Type": "application/json"});
       print(response.body);
@@ -49,7 +47,7 @@ class LoginController extends GetxController {
         var data = jsonDecode(response.body.toString());
         emailController.clear();
         passwordController.clear();
-        Get.to(HomePage());
+        Get.off(HomePage());
         isLoggedIn = true;
         print(data['token']);
         saveToken(data['token']);
@@ -67,5 +65,4 @@ class LoginController extends GetxController {
       isLoginLoading.value = false;
     }
   }
-
 }

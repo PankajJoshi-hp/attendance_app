@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/components/login_page.dart';
 
 /// A self-contained PageView example with a Scaffold and embedded PageIndicator.
-class PageViewExample extends StatefulWidget {
-  const PageViewExample({super.key});
+class Onboarding extends StatefulWidget {
+  const Onboarding({super.key});
 
   @override
-  State<PageViewExample> createState() => _PageViewExampleState();
+  State<Onboarding> createState() => _PageViewExampleState();
 }
 
-class _PageViewExampleState extends State<PageViewExample>
+class _PageViewExampleState extends State<Onboarding>
     with TickerProviderStateMixin {
   late PageController _pageViewController;
   late TabController _tabController;
   int _currentPageIndex = 0;
+
+  final List<Map<String, String>> _pages = [
+    {
+      'imagePath': 'assets/images/Object.png',
+      'title': "Welcome To Our Attendance Tracking App",
+      'description':
+          'Transforming lives by offering hope and opportunities for recovery, wellness, and independence.',
+    },
+    {
+      'imagePath': 'assets/images/Object2.png',
+      'title': "Track Attendance Easily",
+      'description':
+          'Seamlessly manage and monitor attendance with our user-friendly app.',
+    },
+    {
+      'imagePath': 'assets/images/Object3.png',
+      'title': "Stay Organized",
+      'description':
+          'Get real-time attendance insights and boost productivity.',
+    },
+  ];
 
   @override
   void initState() {
@@ -58,63 +81,65 @@ class _PageViewExampleState extends State<PageViewExample>
                 )
               ],
             ),
-            PageView(
-              controller: _pageViewController,
-              onPageChanged: _handlePageViewChanged,
-              children: <Widget>[
-                _buildPage(
-                  imagePath: 'assets/images/Object.png',
-                  title: "Welcome To Our Attendance Tracking App",
-                  description:
-                      'Transforming lives by offering hope and opportunities for recovery, wellness, and independence.',
-                ),
-                _buildPage(
-                  imagePath: 'assets/images/Object.png',
-                  title: "Welcome To Our Attendance Tracking App",
-                  description:
-                      'Transforming lives by offering hope and opportunities for recovery, wellness, and independence.',
-                ),
-                _buildPage(
-                  imagePath: 'assets/images/Object.png',
-                  title: "Welcome To Our Attendance Tracking App",
-                  description:
-                      'Transforming lives by offering hope and opportunities for recovery, wellness, and independence.',
-                ),
-              ],
+            Transform.translate(
+              offset: Offset(0, -60),
+              child: PageView.builder(
+                controller: _pageViewController,
+                itemCount: _pages.length,
+                onPageChanged: _handlePageViewChanged,
+                itemBuilder: (context, index) {
+                  return _buildPage(
+                    imagePath: _pages[index]['imagePath']!,
+                    title: _pages[index]['title']!,
+                    description: _pages[index]['description']!,
+                  );
+                },
+              ),
             ),
-            // Embedded PageIndicator
-            Positioned(
-              bottom: 20,
-              child: SizedBox(
-                width: MediaQuery.sizeOf(context).width * 0.85,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    IconButton(
-                      splashRadius: 16.0,
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        if (_currentPageIndex == 0) return;
-                        _updateCurrentPageIndex(_currentPageIndex - 1);
-                      },
-                      icon: const Icon(Icons.arrow_left_rounded, size: 32.0),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width * 0.85,
+              height: MediaQuery.sizeOf(context).height * 0.15,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _currentPageIndex != 2
+                      ? TextButton(
+                          onPressed: () => Get.off(LogInPage()),
+                          child: const Text(
+                            "Skip",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        )
+                      : SizedBox(
+                          width: 65,
+                          height: 10,
+                        ),
+                  TabPageSelector(
+                    controller: _tabController,
+                    color: Colors.white,
+                    selectedColor: Colors.grey[600],
+                    borderStyle: BorderStyle.none,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_currentPageIndex == 2) {
+                        Get.off(LogInPage());
+                        return;
+                      }
+                      
+                      _updateCurrentPageIndex(_currentPageIndex + 1);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(16),
+                      backgroundColor: Colors.white,
                     ),
-                    TabPageSelector(
-                      controller: _tabController,
-                      color: Colors.grey[300],
-                      selectedColor: Colors.white,
+                    child: const Icon(
+                      Icons.arrow_forward,
+                      color: Colors.purple,
                     ),
-                    IconButton(
-                      splashRadius: 16.0,
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        if (_currentPageIndex == 2) return;
-                        _updateCurrentPageIndex(_currentPageIndex + 1);
-                      },
-                      icon: const Icon(Icons.arrow_right_rounded, size: 32.0),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
