@@ -34,6 +34,7 @@ class LogoutController extends GetxController {
         Get.off(LogInPage());
         final prefsBool = await SharedPreferences.getInstance();
         prefsBool.setBool('isLoggedOut', true);
+        print('Token cleared');
       } else {
         // print('error logging out');
         Fluttertoast.showToast(

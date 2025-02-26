@@ -43,7 +43,7 @@ dependencies:
   geolocator: ^13.0.2
   flutter_localizations:
     sdk: flutter
-  intl: any
+  intl: ^0.19.0
   get_cli: ^1.9.1
   firebase_core: ^3.12.0
   firebase_auth: ^5.5.0
@@ -55,6 +55,10 @@ dependencies:
   rxdart: ^0.28.0
   flutter_local_notifications: ^18.0.1
   smooth_page_indicator: ^1.2.1
+  camera: ^0.11.1
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +92,7 @@ flutter:
     - assets/images/Object.png
     - assets/images/Object2.png
     - assets/images/Object3.png
+    - assets/images/user.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

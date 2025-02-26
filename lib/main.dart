@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/break_page.dart';
+import 'package:todo_app/components/profile_page.dart';
 import 'package:todo_app/components/splash_screen.dart';
 import 'package:todo_app/controllers/controller.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final ThemeMode _themeMode = ThemeMode.system;
-  Locale _locale = Locale('en', 'US'); 
+  Locale _locale = Locale('en', 'US');
   bool isLoading = true;
 
   @override
@@ -87,6 +88,7 @@ class _MyAppState extends State<MyApp> {
             darkTheme: ThemeData.dark(),
             themeMode: _themeMode,
             home: SplashScreen(),
+            // home: ProfilePage(),
           );
   }
 }
@@ -168,9 +170,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               DropdownButton(
-                value: Get.locale ??
-                    Locale(
-                        'en', 'US'), 
+                value: Get.locale ?? Locale('en', 'US'),
                 onChanged: (Locale? newValue) async {
                   if (newValue != null) {
                     Get.updateLocale(newValue);
@@ -192,19 +192,17 @@ class _HomePageState extends State<HomePage> {
                   );
                 }).toList(),
               ),
-              Obx(() => logoutControl.isLogoutLoading.value == false
-                  ? Text.rich(TextSpan(
-                      text: 'Logout'.tr,
-                      style: TextStyle(
-                          // color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          logoutControl.logout();
-                        }))
-                  : CircularProgressIndicator())
+
+              InkWell(
+                child: Image.asset(
+                  'assets/images/user.png',
+                  width: 35,
+                  height: 35,
+                ),
+                onTap: () {
+                  Get.to(ProfilePage());
+                },
+              )
             ]),
       ),
       body: SingleChildScrollView(
