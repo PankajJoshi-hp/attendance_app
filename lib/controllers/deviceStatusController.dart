@@ -4,7 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
 class DeviceStatusController extends GetxController {
-  Position? currentLocation;
+  Rxn<Position> currentLocation = Rxn<Position>();
   late bool servicePermission = false;
   late LocationPermission permission;
   final info = NetworkInfo();
@@ -32,13 +32,13 @@ class DeviceStatusController extends GetxController {
     // Get and store current position
     Position position = await Geolocator.getCurrentPosition();
 
-    currentLocation = position;
+    currentLocation.value = position;
 
     print(
-        "Latitude: ${currentLocation?.latitude}, Longitude: ${currentLocation?.longitude}");
+        "Latitude: ${currentLocation.value?.latitude}, Longitude: ${currentLocation.value?.longitude}");
 
-    infoObject['latitude'] = currentLocation?.latitude.toString();
-    infoObject['longitude'] = currentLocation?.longitude.toString();
+    infoObject['latitude'] = currentLocation.value?.latitude.toString();
+    infoObject['longitude'] = currentLocation.value?.longitude.toString();
   }
 
   Future<void> getNetworkInfo() async {

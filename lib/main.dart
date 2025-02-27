@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/break_page.dart';
+import 'package:todo_app/components/maps_demo.dart';
 import 'package:todo_app/components/profile_page.dart';
 import 'package:todo_app/components/splash_screen.dart';
 import 'package:todo_app/controllers/controller.dart';
@@ -87,7 +88,7 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(primarySwatch: Colors.green),
             darkTheme: ThemeData.dark(),
             themeMode: _themeMode,
-            home: SplashScreen(),
+            home: MapsDemo(),
             // home: ProfilePage(),
           );
   }
