@@ -88,8 +88,8 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(primarySwatch: Colors.green),
             darkTheme: ThemeData.dark(),
             themeMode: _themeMode,
-            home: MapsDemo(),
-            // home: ProfilePage(),
+            // home: SplashScreen(),
+            home: HomePage(),
           );
   }
 }
@@ -193,7 +193,6 @@ class _HomePageState extends State<HomePage> {
                   );
                 }).toList(),
               ),
-
               InkWell(
                 child: Image.asset(
                   'assets/images/user.png',
@@ -250,6 +249,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ))
                   .toList(),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(MapsDemo());
+              },
+              child: Text('Map page'),
+              style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Colors.blueGrey)),
             ),
             // Text('Last message from Firebase Messaging:',
             //     style: Theme.of(context).textTheme.titleLarge),

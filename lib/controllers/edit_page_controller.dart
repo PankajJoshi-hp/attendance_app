@@ -4,6 +4,10 @@ import 'package:intl/intl.dart';
 
 class EditPageController extends GetxController {
   var selectedDate = Rxn<DateTime>();
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController numberController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   Future<void> selectDate(context) async {
     DateTime? pickedDate = await showDatePicker(

@@ -15,7 +15,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  String gender = 'Male'; 
+  String gender = 'Male';
   final picker = ImagePicker();
   File? image;
   final EditPageController editController = Get.put(EditPageController());
@@ -98,6 +98,19 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   @override
+  void dispose() {
+    editController.nameController.dispose();
+    editController.numberController.dispose();
+    editController.emailController.dispose();
+    super.dispose();
+  }
+
+  // void saveData(){
+  //   setState(() {
+  //   });
+  // }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -163,14 +176,37 @@ class _EditProfileState extends State<EditProfile> {
                 children: [
                   const Text("Full Name",
                       style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  TextField(
+                  TextFormField(
+                    controller: editController.nameController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Name field shouldn't be empty";
+                      }
+                      return null;
+                    },
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(16),
-                      hintText: "Xyz",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
+                        hintText: 'Your name',
+                        hintStyle: TextStyle(fontSize: 16, color: Colors.grey),
+                        contentPadding: EdgeInsets.all(16),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Color(0XFF8B0000), width: 1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color(0XFF8B0000), width: 2),
+                            borderRadius: BorderRadius.circular(12)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(12)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(12))),
                   ),
                   const SizedBox(height: 15),
                   const Text("Date of Birth",
@@ -187,7 +223,7 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       child: Obx(
                         () => Text(
-                           editController.formattedDate,
+                          editController.formattedDate,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),
@@ -210,7 +246,9 @@ class _EditProfileState extends State<EditProfile> {
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.circular(8),
-                              color: gender == "Male" ? Colors.grey.shade200 : Colors.white,
+                              color: gender == "Male"
+                                  ? Colors.grey.shade200
+                                  : Colors.white,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -243,7 +281,9 @@ class _EditProfileState extends State<EditProfile> {
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.circular(8),
-                              color: gender == "Female" ? Colors.grey.shade200 : Colors.white,
+                              color: gender == "Female"
+                                  ? Colors.grey.shade200
+                                  : Colors.white,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -268,28 +308,74 @@ class _EditProfileState extends State<EditProfile> {
                   const SizedBox(height: 15),
                   const Text("Mobile No",
                       style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  TextField(
+                  TextFormField(
+                    controller: editController.numberController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Mobile No. field shouldn't be empty";
+                      }
+                      return null;
+                    },
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(16),
-                      hintText: "XXXXXXXXXX",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
+                        hintText: 'XXXXXXXXXX',
+                        hintStyle: TextStyle(fontSize: 16, color: Colors.grey),
+                        contentPadding: EdgeInsets.all(16),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Color(0XFF8B0000), width: 1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color(0XFF8B0000), width: 2),
+                            borderRadius: BorderRadius.circular(12)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(12)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(12))),
                   ),
                   const SizedBox(height: 15),
                   const Text("Email",
                       style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  TextField(
+                  TextFormField(
+                    controller: editController.emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Email field shouldn't be empty";
+                      }
+                      return null;
+                    },
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(16),
-                      hintText: "xxx@gmail.com",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
+                        hintText: 'xxx@gmail.com',
+                        hintStyle: TextStyle(fontSize: 16, color: Colors.grey),
+                        contentPadding: EdgeInsets.all(16),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Color(0XFF8B0000), width: 1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color(0XFF8B0000), width: 2),
+                            borderRadius: BorderRadius.circular(12)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(12)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(12))),
                   ),
                   const SizedBox(height: 25),
                   Row(
@@ -315,8 +401,8 @@ class _EditProfileState extends State<EditProfile> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: const Text("Save",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 16)),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16)),
                         ),
                       ),
                     ],
