@@ -13,7 +13,7 @@ class BreakController extends GetxController {
   Future<void> getBreak() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var get_Token = prefs.getString('token');
-    // await Future.delayed(const Duration(seconds: 3));
+    // await Future.delayed(const Duration(seconds: 1));
 
     try {
       isBreakLoading.value = true;

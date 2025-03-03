@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:todo_app/controllers/break_controller.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
+import 'package:animation_list/animation_list.dart';
 
 class BreakPage extends StatefulWidget {
   const BreakPage({super.key});
@@ -15,10 +17,19 @@ class _BreakPageState extends State<BreakPage> {
   bool isStarted = false;
   String breaksId = '';
 
+  Widget _buildTile() {
+    return Container(
+        height: 100,
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(25)),
+          color: Colors.grey[100],
+        ));
+  }
+
   @override
   void initState() {
     super.initState();
-
     breakControl.getBreak();
   }
 
@@ -34,76 +45,127 @@ class _BreakPageState extends State<BreakPage> {
           ),
         ),
         body: SingleChildScrollView(
-            child: Obx(() => Column(
+            child: Obx(
+          () => !breakControl.isBreakLoading.value
+              ? AnimationList(
+                  duration: 1500,
+                  reBounceDepth: 30,
+                  shrinkWrap: true,
                   children: [
-                    !breakControl.isBreakLoading.value
-                        ? Column(
-                            children: breakControl.breaks
-                                .map((breaks) => Container(
-                                      child: Card(
-                                          child: ListTile(
-                                        title: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              breaks['name'].toUpperCase(),
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  // color: Colors.black87,
-                                                  fontWeight: FontWeight.w500),
-                                              // style: TextStyle(color: Colors.white),
-                                            ),
-                                            Text(
-                                              'Duration: ${breaks['duration']} min',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey),
-                                            )
-                                          ],
-                                        ),
-                                        trailing: ElevatedButton(
-                                            style: ButtonStyle(
-                                                backgroundColor: breaksId !=
-                                                        breaks['_id']
-                                                    ? WidgetStatePropertyAll(
-                                                        AppColors.lightGreen)
-                                                    : WidgetStatePropertyAll(
-                                                        AppColors.red),
-                                                shape: WidgetStatePropertyAll(
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(7)))),
-                                            onPressed: () {
-                                              if (breaksId == breaks['_id']) {
-                                                breaksId = '';
-                                              } else {
-                                                breaksId = breaks['_id'];
-                                              }
-                                              setState(() {
-                                                print(breaks['_id']);
-                                                isStarted = !isStarted;
-                                              });
-                                            },
-                                            child: Text(
-                                              breaksId == breaks['_id']
-                                                  ? 'End'
-                                                  : 'Start',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16),
-                                            )),
-                                        minLeadingWidth: double.infinity,
+                    Column(
+                        children: breakControl.breaks
+                            .map((breaks) => Card(
+                                    child: ListTile(
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        breaks['name'].toUpperCase(),
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            // color: Colors.black87,
+                                            fontWeight: FontWeight.w500),
+                                        // style: TextStyle(color: Colors.white),
+                                      ),
+                                      Text(
+                                        'Duration: ${breaks['duration']} min',
+                                        style: TextStyle(
+                                            fontSize: 14, color: Colors.grey),
+                                      )
+                                    ],
+                                  ),
+                                  trailing: ElevatedButton(
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              breaksId != breaks['_id']
+                                                  ? WidgetStatePropertyAll(
+                                                      AppColors.lightGreen)
+                                                  : WidgetStatePropertyAll(
+                                                      AppColors.red),
+                                          shape: WidgetStatePropertyAll(
+                                              RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          7)))),
+                                      onPressed: () {
+                                        if (breaksId == breaks['_id']) {
+                                          breaksId = '';
+                                        } else {
+                                          breaksId = breaks['_id'];
+                                        }
+                                        setState(() {
+                                          print(breaks['_id']);
+                                          isStarted = !isStarted;
+                                        });
+                                      },
+                                      child: Text(
+                                        breaksId == breaks['_id']
+                                            ? 'End'
+                                            : 'Start',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 16),
                                       )),
-                                    ))
-                                .toList())
-                        : Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height,
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator()),
+                                  minLeadingWidth: double.infinity,
+                                )))
+                            .toList())
                   ],
-                ))));
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: 2,
+                  itemBuilder: (_, __) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Shimmer.fromColors(
+                      baseColor: Color(0XFFD5D5D5),
+                      highlightColor: Color(0XFFFFFFFF),
+                      child: ListTile(
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.sizeOf(context).width * 0.4,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4)),
+                            ),
+                            SizedBox(height: 6),
+                            Container(
+                              width: MediaQuery.sizeOf(context).width * 0.3,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4)),
+                            ),
+                          ],
+                        ),
+                        trailing: Container(
+                          width: MediaQuery.sizeOf(context).width * 0.2,
+                          height: 24,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+        )));
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(title: Text('Animation List')),
+  //     body: Center(
+  //       child: AnimationList(
+  //           duration: 1500,
+  //           reBounceDepth: 30,
+  //           children: data.map((item) {
+  //             return _buildTile(item['title'], item['backgroundColor']);
+  //           }).toList()),
+  //     ),
+  //   );
+  // }
 }
