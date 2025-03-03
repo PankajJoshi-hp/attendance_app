@@ -78,6 +78,7 @@ class _SplashScreenState extends State<SplashScreen>
                   textStyle: TextStyle(
                     fontSize: MediaQuery.sizeOf(context).height * 0.045,
                     fontWeight: FontWeight.w600,
+                    color: Colors.white
                   ),
                   speed: Duration(milliseconds: 150))
             ], repeatForever: true),

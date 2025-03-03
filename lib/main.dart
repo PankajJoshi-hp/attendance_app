@@ -1,19 +1,20 @@
+import 'package:animation_list/animation_list.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/components/break_page.dart';
 import 'package:todo_app/components/maps_demo.dart';
 import 'package:todo_app/components/profile_page.dart';
 import 'package:todo_app/components/splash_screen.dart';
 import 'package:todo_app/controllers/controller.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
 import 'package:todo_app/controllers/logout_controller.dart';
+import 'package:todo_app/controllers/profile_page_controller.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/language_control/translate.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
 import 'package:todo_app/reusable_widgets/push_notification_service.dart';
+import 'package:animations/animations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,62 +38,38 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final ThemeMode _themeMode = ThemeMode.system;
-  Locale _locale = Locale('en', 'US');
-  bool isLoading = true;
+  final ProfilePageController profileController = Get.put(ProfilePageController());
 
   @override
   void initState() {
     super.initState();
-    _loadLocale();
-  }
-
-  Future<void> _loadLocale() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var savedLocale = prefs.getString('savedLang');
-    setState(() {
-      _locale = _getLocale(savedLocale);
-      isLoading = false;
-    });
-  }
-
-  Locale _getLocale(String? savedLocale) {
-    if (savedLocale == 'hi_IN') {
-      return Locale('hi', 'IN');
-    } else if (savedLocale == 'ar_AE') {
-      return Locale('ar', 'AE');
-    } else {
-      return Locale('en', 'US');
-    }
-  }
-
-  void updateLocale(Locale newLocale) {
-    setState(() {
-      _locale = newLocale;
-    });
+    profileController.loadLocale();
   }
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? MaterialApp(
-            home: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
+    return Obx(() {
+      return profileController.isLoading.value
+          ? MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
-            ),
-          )
-        : GetMaterialApp(
-            translations: Translate(),
-            locale: _locale,
-            fallbackLocale: Locale('en', 'US'),
-            theme: ThemeData(primarySwatch: Colors.green),
-            darkTheme: ThemeData.dark(),
-            themeMode: _themeMode,
-            home: SplashScreen(),
-            // home: HomePage(),
-          );
+            )
+          : GetMaterialApp(
+              translations: Translate(),
+              locale: profileController.locale.value,
+              fallbackLocale: Locale('en', 'US'),
+              theme: ThemeData(primarySwatch: Colors.green),
+              darkTheme: ThemeData.dark(),
+              themeMode: _themeMode,
+              home: SplashScreen(),
+            );
+    });
   }
 }
+
 
 class HomePage extends StatefulWidget {
   // final toggleTheme;
@@ -109,11 +86,7 @@ class _HomePageState extends State<HomePage> {
   LogoutController logoutControl = Get.put(LogoutController());
   Controller reportControl = Get.put(Controller());
   DeviceStatusController deviceInfoControl = Get.put(DeviceStatusController());
-  List<Map> list = [
-    {'name': 'Eng', 'language': Locale('en', 'US')},
-    {'name': 'Hin', 'language': Locale('hi', 'IN')},
-    {'name': 'Arb', 'language': Locale('ar', 'AE')},
-  ];
+ 
   String? selectedButton;
   String _lastMessage = '';
 
@@ -132,6 +105,22 @@ class _HomePageState extends State<HomePage> {
         }
       });
     });
+  }
+
+  void openProfilePage(BuildContext context) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: Duration(milliseconds: 500),
+        pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -170,38 +159,14 @@ class _HomePageState extends State<HomePage> {
                       ]),
                 ],
               ),
-              DropdownButton(
-                value: Get.locale ?? Locale('en', 'US'),
-                onChanged: (Locale? newValue) async {
-                  if (newValue != null) {
-                    Get.updateLocale(newValue);
-
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setString('savedLang', newValue.toString());
-
-                    final myAppState =
-                        context.findAncestorStateOfType<_MyAppState>();
-                    if (myAppState != null) {
-                      myAppState.updateLocale(newValue);
-                    }
-                  }
-                },
-                items: list.map<DropdownMenuItem<Locale>>((lang) {
-                  return DropdownMenuItem(
-                    value: lang['language'],
-                    child: Text(lang['name']),
-                  );
-                }).toList(),
-              ),
+              
               InkWell(
                 child: Image.asset(
                   'assets/images/user.png',
                   width: 35,
                   height: 35,
                 ),
-                onTap: () {
-                  Navigator.of(context).push(reportControl.profileRoute());
-                },
+                onTap: () => openProfilePage(context),
               )
             ]),
       ),
@@ -209,47 +174,53 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: reportControl.reportButtons
-                  .map((button) => GestureDetector(
-                        onTap: () {
-                          if (button['id'] != 2) {
-                            reportControl.focusTextField(context);
-                            selectedButton = button['type'];
-                          } else {
-                            selectedButton = null;
-                            Navigator.of(context).push(reportControl.createRoute());
-                            // Get.to(BreakPage());
-                          }
-                          // controller
-                          //     .updateReport(controller.reportController.text);
-                          print("${button['type']} Clicked");
-                          // controller.selectedId = button['id'];
-                          setState(() {});
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.32,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: button['background_color'],
-                            borderRadius: BorderRadius.circular(12),
+            AnimationList(
+              duration: 1500,
+              reBounceDepth: 30,
+              shrinkWrap: true,
+              children: [Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: reportControl.reportButtons
+                    .map((button) => GestureDetector(
+                          onTap: () {
+                            if (button['id'] != 2) {
+                              reportControl.focusTextField(context);
+                              selectedButton = button['type'];
+                            } else {
+                              selectedButton = null;
+                              Navigator.of(context)
+                                  .push(reportControl.createRoute());
+                              // Get.to(BreakPage());
+                            }
+                            // controller
+                            //     .updateReport(controller.reportController.text);
+                            print("${button['type']} Clicked");
+                            // controller.selectedId = button['id'];
+                            setState(() {});
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.32,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: button['background_color'],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(button['icon'],
+                                    size: 40, color: Colors.white),
+                                SizedBox(height: 8),
+                                Text(button['type'.tr],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                              ],
+                            ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(button['icon'],
-                                  size: 40, color: Colors.white),
-                              SizedBox(height: 8),
-                              Text(button['type'.tr],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white)),
-                            ],
-                          ),
-                        ),
-                      ))
-                  .toList(),
+                        ))
+                    .toList(),
+              )],
             ),
             ElevatedButton(
               onPressed: () {
