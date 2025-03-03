@@ -1,9 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/edit_profile.dart';
 import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/logout_controller.dart';
+import 'package:animations/animations.dart';
+import 'package:todo_app/controllers/profile_page_controller.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -14,6 +17,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   LogoutController logoutControl = Get.put(LogoutController());
+  ProfilePageController profileController = Get.put(ProfilePageController());
 
   List<Map> profileOptions = [
     {'icon': Icons.language, 'name': 'Language'},
@@ -42,7 +46,6 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 20,
           children: <Widget>[
             Container(
               height: MediaQuery.sizeOf(context).height * 0.14,
@@ -54,14 +57,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 borderRadius: BorderRadius.circular(10.0), // Uniform radius
               ),
-              // color: Colors.grey[200],
               child: Row(
-                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Container(
                     width: MediaQuery.sizeOf(context).width * 0.35,
-                    height: MediaQuery.sizeOf(context).height * 0.2,
-                    padding: EdgeInsets.only(left: 10, right: 30),
                     child: Image.asset('assets/images/user.png'),
                   ),
                   Expanded(
@@ -71,9 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: <Widget>[
                       Text(
                         'Test User',
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.sizeOf(context).height * 0.024),
+                        style: TextStyle(fontSize: 20),
                       ),
                       Text.rich(
                         TextSpan(
@@ -90,51 +87,97 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Column(
-                children: profileOptions
-                    .map((option) => Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: InkWell(
-                            onTap: () {
-                              if (option['name'] == 'Logout') {
-                                logoutControl.logout();
-                              } else {
-                                return;
-                              }
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    spacing: 10,
+              children: profileOptions.map((option) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: option['name'] == 'Language'
+                      ? OpenContainer(
+                          transitionType: ContainerTransitionType.fadeThrough,
+                          closedElevation: 0,
+                          closedColor: Colors.transparent,
+                          openColor: Colors.white,
+                          closedBuilder: (_, openContainer) {
+                            return InkWell(
+                              onTap: openContainer,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Row(
                                     children: <Widget>[
-                                      Icon(
-                                        option['icon'],
-                                        size: 28,
-                                        color: Colors.deepOrangeAccent,
-                                      ),
+                                      Icon(option['icon'],
+                                          size: 28,
+                                          color: Colors.deepOrangeAccent),
+                                      SizedBox(width: 10),
                                       Text(option['name'],
                                           style: TextStyle(
                                               fontSize: 20,
                                               color: Colors.black)),
                                     ],
                                   ),
+                                  Icon(Icons.arrow_right, size: 28),
+                                ],
+                              ),
+                            );
+                          },
+                          openBuilder: (_, closeContainer) {
+                            return Scaffold(
+                              appBar: AppBar(
+                                backgroundColor: Colors.blue,
+                                title: Text("Select Language"),
+                                leading: IconButton(
+                                  onPressed: closeContainer,
+                                  icon: Icon(Icons.arrow_back,
+                                      color: Colors.white),
                                 ),
-                                Icon(
-                                  Icons.arrow_right,
-                                  size: 28,
-                                )
-                              ],
-                            ),
+                              ),
+                              body: ListView(
+                                children: profileController.list.map((lang) {
+                                  return ListTile(
+                                    title: Text(lang['name']),
+                                    onTap: () async {
+                                      Locale selectedLocale = lang['language'];
+                                      Get.updateLocale(selectedLocale);
+
+                                      final prefs = await SharedPreferences.getInstance();
+                                      prefs.setString('savedLang', selectedLocale.toString());
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          },
+                        )
+                      : InkWell(
+                          onTap: () {
+                            if (option['name'] == 'Logout') {
+                              logoutControl.logout();
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Icon(option['icon'],
+                                      size: 28,
+                                      color: Colors.deepOrangeAccent),
+                                  SizedBox(width: 10),
+                                  Text(option['name'],
+                                      style: TextStyle(
+                                          fontSize: 20, color: Colors.black)),
+                                ],
+                              ),
+                              Icon(Icons.arrow_right, size: 28),
+                            ],
                           ),
-                        ))
-                    .toList())
+                        ),
+                );
+              }).toList(),
+            )
           ],
         ),
-      )),
-    );
+      )));
   }
 }
 
