@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen>
     animation.addListener(() => setState(() {}));
     animationController.forward();
 
-    Timer(const Duration(seconds: 2), navigationPage);
+    Timer(const Duration(seconds: 3), navigationPage);
   }
 
   void navigationPage() async {
@@ -72,13 +73,14 @@ class _SplashScreenState extends State<SplashScreen>
                 fit: BoxFit.cover,
               ),
             ),
-            Text(
-              'Attendance App',
-              style: TextStyle(
-                fontSize: MediaQuery.sizeOf(context).height * 0.045,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            AnimatedTextKit(animatedTexts: [
+              WavyAnimatedText('Attendance App',
+                  textStyle: TextStyle(
+                    fontSize: MediaQuery.sizeOf(context).height * 0.045,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  speed: Duration(milliseconds: 150))
+            ], repeatForever: true),
             SizedBox(
               width: double.infinity,
               height: MediaQuery.sizeOf(context).height * 0.45,

@@ -72,14 +72,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text(
                         'Test User',
                         style: TextStyle(
-                            fontSize: MediaQuery.sizeOf(context).height * 0.024),
+                            fontSize:
+                                MediaQuery.sizeOf(context).height * 0.024),
                       ),
                       Text.rich(
                         TextSpan(
                             text: 'Edit Profile',
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Get.to(EditProfile());
+                                Navigator.of(context).push(editProfileRoute());
                               }),
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       )
@@ -135,4 +136,23 @@ class _ProfilePageState extends State<ProfilePage> {
       )),
     );
   }
+}
+
+Route editProfileRoute() {
+  return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const EditProfile(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      });
 }

@@ -97,13 +97,13 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  @override
-  void dispose() {
-    editController.nameController.dispose();
-    editController.numberController.dispose();
-    editController.emailController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   editController.nameController.dispose();
+  //   editController.numberController.dispose();
+  //   editController.emailController.dispose();
+  //   super.dispose();
+  // }
 
   // void saveData(){
   //   setState(() {

@@ -88,8 +88,8 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(primarySwatch: Colors.green),
             darkTheme: ThemeData.dark(),
             themeMode: _themeMode,
-            // home: SplashScreen(),
-            home: HomePage(),
+            home: SplashScreen(),
+            // home: HomePage(),
           );
   }
 }
@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                   height: 35,
                 ),
                 onTap: () {
-                  Get.to(ProfilePage());
+                  Navigator.of(context).push(reportControl.profileRoute());
                 },
               )
             ]),
@@ -219,7 +219,8 @@ class _HomePageState extends State<HomePage> {
                             selectedButton = button['type'];
                           } else {
                             selectedButton = null;
-                            Get.to(BreakPage());
+                            Navigator.of(context).push(reportControl.createRoute());
+                            // Get.to(BreakPage());
                           }
                           // controller
                           //     .updateReport(controller.reportController.text);

@@ -17,16 +17,6 @@ class _BreakPageState extends State<BreakPage> {
   bool isStarted = false;
   String breaksId = '';
 
-  Widget _buildTile() {
-    return Container(
-        height: 100,
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
-          color: Colors.grey[100],
-        ));
-  }
-
   @override
   void initState() {
     super.initState();
@@ -153,19 +143,4 @@ class _BreakPageState extends State<BreakPage> {
                 ),
         )));
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(title: Text('Animation List')),
-  //     body: Center(
-  //       child: AnimationList(
-  //           duration: 1500,
-  //           reBounceDepth: 30,
-  //           children: data.map((item) {
-  //             return _buildTile(item['title'], item['backgroundColor']);
-  //           }).toList()),
-  //     ),
-  //   );
-  // }
 }
