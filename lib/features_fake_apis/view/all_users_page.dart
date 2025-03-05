@@ -59,7 +59,7 @@ class ListCard extends StatelessWidget {
       onTap: () {
         print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
         print(user.id);
-        Get.to(SingleUserPage(userDetail: user, userId: user.id));
+        Get.to(SingleUserPage(userId: user.id));
       },
       child: Container(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),

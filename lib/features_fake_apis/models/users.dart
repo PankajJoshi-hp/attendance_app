@@ -5,7 +5,13 @@ class Users {
   final String? role;
   final String? avatar;
 
-  Users({this.id, this.email, this.name, this.role, this.avatar});
+  Users({
+    this.id,
+    this.email,
+    this.name,
+    this.role,
+    this.avatar,
+  });
 
   factory Users.fromJson(Map<String, dynamic> json) => Users(
       id: json['id'],

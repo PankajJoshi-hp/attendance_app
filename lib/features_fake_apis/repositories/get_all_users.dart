@@ -7,7 +7,8 @@ class GetAllUsers {
   final ApiServices apiService = ApiServices();
 
   Future<List<Users>> getAllUsers() async {
-    final response = await apiService.fetchUsers();
+    String url = 'https://api.escuelajs.co/api/v1/users';
+    final response = await apiService.fetchUsers(url);
     print('***************************');
     print('response status code: ${response.statusCode}');
     print(response.body);
