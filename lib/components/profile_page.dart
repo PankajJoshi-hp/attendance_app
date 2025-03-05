@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             Container(
               height: MediaQuery.sizeOf(context).height * 0.14,
-              margin: EdgeInsets.only(bottom: 20),
+              margin: EdgeInsets.only(bottom: 40),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Color(0XFFCCCCCC),
@@ -112,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Text(option['name'],
                                           style: TextStyle(
                                               fontSize: 20,
-                                              color: Colors.black)),
+                                              )),
                                     ],
                                   ),
                                   Icon(Icons.arrow_right, size: 28),
@@ -165,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(width: 10),
                                   Text(option['name'],
                                       style: TextStyle(
-                                          fontSize: 20, color: Colors.black)),
+                                          fontSize: 20)),
                                 ],
                               ),
                               Icon(Icons.arrow_right, size: 28),

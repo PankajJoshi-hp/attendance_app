@@ -10,6 +10,7 @@ import 'package:todo_app/controllers/controller.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
 import 'package:todo_app/controllers/logout_controller.dart';
 import 'package:todo_app/controllers/profile_page_controller.dart';
+import 'package:todo_app/features_fake_apis/view/all_users_page.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/language_control/translate.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
@@ -38,7 +39,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final ThemeMode _themeMode = ThemeMode.system;
-  final ProfilePageController profileController = Get.put(ProfilePageController());
+  final ProfilePageController profileController =
+      Get.put(ProfilePageController());
 
   @override
   void initState() {
@@ -70,7 +72,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
 class HomePage extends StatefulWidget {
   // final toggleTheme;
   const HomePage({
@@ -86,7 +87,7 @@ class _HomePageState extends State<HomePage> {
   LogoutController logoutControl = Get.put(LogoutController());
   Controller reportControl = Get.put(Controller());
   DeviceStatusController deviceInfoControl = Get.put(DeviceStatusController());
- 
+
   String? selectedButton;
   String _lastMessage = '';
 
@@ -159,7 +160,6 @@ class _HomePageState extends State<HomePage> {
                       ]),
                 ],
               ),
-              
               InkWell(
                 child: Image.asset(
                   'assets/images/user.png',
@@ -178,49 +178,51 @@ class _HomePageState extends State<HomePage> {
               duration: 1500,
               reBounceDepth: 30,
               shrinkWrap: true,
-              children: [Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: reportControl.reportButtons
-                    .map((button) => GestureDetector(
-                          onTap: () {
-                            if (button['id'] != 2) {
-                              reportControl.focusTextField(context);
-                              selectedButton = button['type'];
-                            } else {
-                              selectedButton = null;
-                              Navigator.of(context)
-                                  .push(reportControl.createRoute());
-                              // Get.to(BreakPage());
-                            }
-                            // controller
-                            //     .updateReport(controller.reportController.text);
-                            print("${button['type']} Clicked");
-                            // controller.selectedId = button['id'];
-                            setState(() {});
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.32,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: button['background_color'],
-                              borderRadius: BorderRadius.circular(12),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: reportControl.reportButtons
+                      .map((button) => GestureDetector(
+                            onTap: () {
+                              if (button['id'] != 2) {
+                                reportControl.focusTextField(context);
+                                selectedButton = button['type'];
+                              } else {
+                                selectedButton = null;
+                                Navigator.of(context)
+                                    .push(reportControl.createRoute());
+                                // Get.to(BreakPage());
+                              }
+                              // controller
+                              //     .updateReport(controller.reportController.text);
+                              print("${button['type']} Clicked");
+                              // controller.selectedId = button['id'];
+                              setState(() {});
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.32,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: button['background_color'],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(button['icon'],
+                                      size: 40, color: Colors.white),
+                                  SizedBox(height: 8),
+                                  Text(button['type'.tr],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white)),
+                                ],
+                              ),
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(button['icon'],
-                                    size: 40, color: Colors.white),
-                                SizedBox(height: 8),
-                                Text(button['type'.tr],
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white)),
-                              ],
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              )],
+                          ))
+                      .toList(),
+                )
+              ],
             ),
             ElevatedButton(
               onPressed: () {
@@ -229,6 +231,14 @@ class _HomePageState extends State<HomePage> {
               child: Text('Map page'),
               style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Colors.blueGrey)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(AllUsersPage());
+              },
+              child: Text('All Users'),
+              style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Colors.grey[100])),
             ),
             // Text('Last message from Firebase Messaging:',
             //     style: Theme.of(context).textTheme.titleLarge),
