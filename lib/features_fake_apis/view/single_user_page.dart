@@ -29,6 +29,21 @@ class _SingleUserPageState extends State<SingleUserPage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
+        actions: [
+          Obx(() => IconButton(
+                icon:
+                    Icon(singleUser.isEditing.value ? Icons.check : Icons.edit),
+                onPressed: () {
+                  if (singleUser.isEditing.value) {
+                    singleUser.updateUser(widget.userId).then((_) {
+                      singleUser.toggleEditState();
+                    });
+                  } else {
+                    singleUser.toggleEditState();
+                  }
+                },
+              )),
+        ],
       ),
       body: Obx(() {
         if (singleUser.isLoading.value) {
@@ -66,8 +81,6 @@ class _SingleUserPageState extends State<SingleUserPage> {
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
                         user.avatar!,
-                        // height: 120,
-                        // width: 120,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -82,23 +95,33 @@ class _SingleUserPageState extends State<SingleUserPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        Text(
-                          user.name ?? "No Name",
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
-                          ),
-                        ),
+                        Obx(() => singleUser.isEditing.value
+                            ? TextField(
+                                controller: singleUser.nameController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Enter Name',
+                                ),
+                              )
+                            : Text(
+                                user.name ?? "No Name",
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueAccent,
+                                ),
+                              )),
                         const SizedBox(height: 8),
                         Text(
                           user.email ?? "No Email",
-                          style: const TextStyle(fontSize: 16, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           user.role ?? "No Role",
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -113,11 +136,13 @@ class _SingleUserPageState extends State<SingleUserPage> {
                   label: const Text('Refresh Data'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    textStyle: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
