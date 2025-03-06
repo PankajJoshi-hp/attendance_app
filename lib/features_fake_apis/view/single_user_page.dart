@@ -31,18 +31,23 @@ class _SingleUserPageState extends State<SingleUserPage> {
         backgroundColor: Colors.blueAccent,
         actions: [
           Obx(() => IconButton(
-                icon:
-                    Icon(singleUser.isEditing.value ? Icons.check : Icons.edit),
+                icon: singleUser.isEditing.value
+                    ? (singleUser.isSaving.value
+                        ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(),
+                          )
+                        : Icon(Icons.check))
+                    : Icon(Icons.edit),
                 onPressed: () {
                   if (singleUser.isEditing.value) {
-                    singleUser.updateUser(widget.userId).then((_) {
-                      singleUser.toggleEditState();
-                    });
+                    singleUser.updateUser(widget.userId);
                   } else {
-                    singleUser.toggleEditState();
+                    singleUser.isEditing.value = true;
                   }
                 },
-              )),
+              ))
         ],
       ),
       body: Obx(() {
@@ -58,94 +63,102 @@ class _SingleUserPageState extends State<SingleUserPage> {
         }
 
         final user = singleUser.user!;
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (user.avatar != null)
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                          offset: const Offset(2, 2),
+        return SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (user.avatar != null)
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                            offset: const Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: SizedBox(
+                        height: MediaQuery.sizeOf(context).height * 0.2,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            user.avatar!,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                    child: ClipRRect(
+                  const SizedBox(height: 16),
+                  Card(
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        user.avatar!,
-                        fit: BoxFit.cover,
+                    ),
+                    elevation: 4,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Obx(() => singleUser.isEditing.value
+                                ? TextField(
+                                    controller: singleUser.nameController,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Enter Name',
+                                    ),
+                                  )
+                                : Text(
+                                    user.name ?? "No Name",
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueAccent,
+                                    ),
+                                  )),
+                            const SizedBox(height: 8),
+                            Text(
+                              user.email ?? "No Email",
+                              style: const TextStyle(
+                                  fontSize: 16, color: Colors.grey),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              user.role ?? "No Role",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                const SizedBox(height: 16),
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        Obx(() => singleUser.isEditing.value
-                            ? TextField(
-                                controller: singleUser.nameController,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Enter Name',
-                                ),
-                              )
-                            : Text(
-                                user.name ?? "No Name",
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blueAccent,
-                                ),
-                              )),
-                        const SizedBox(height: 8),
-                        Text(
-                          user.email ?? "No Email",
-                          style:
-                              const TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          user.role ?? "No Role",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    singleUser.fetchSingleUser(widget.userId);
-                  },
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Refresh Data'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    textStyle: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  // ElevatedButton.icon(
+                  //   onPressed: () {
+                  //     singleUser.fetchSingleUser(widget.userId);
+                  //   },
+                  //   icon: const Icon(Icons.refresh),
+                  //   label: const Text('Refresh Data'),
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.blueAccent,
+                  //     padding: const EdgeInsets.symmetric(
+                  //         horizontal: 20, vertical: 12),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     textStyle: const TextStyle(
+                  //         fontSize: 16, fontWeight: FontWeight.w600),
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ),
         );

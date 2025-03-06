@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/features_fake_apis/models/users.dart';
+import 'package:todo_app/features_fake_apis/view/create_user_view.dart';
 import 'package:todo_app/features_fake_apis/view/single_user_page.dart';
 import 'package:todo_app/features_fake_apis/view_modal/users_view_model.dart';
+import 'package:todo_app/main.dart';
 
 class AllUsersPage extends StatefulWidget {
   const AllUsersPage({super.key});
@@ -16,9 +18,24 @@ class _AllUsersPageState extends State<AllUsersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          Get.off(HomePage());
+        }
+      },
+      child: Scaffold(
         appBar: AppBar(
           title: Text('All Users Page'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Get.to(CreateUserView());
+                },
+                icon: Icon(Icons.add))
+          ],
         ),
         body: Obx(() {
           if (controller.fetchingData.value) {
@@ -32,20 +49,21 @@ class _AllUsersPageState extends State<AllUsersPage> {
             );
           }
 
-          return ListView.builder(
-            itemCount: controller.users.length,
-            itemBuilder: (context, index) {
-              return ListCard(user: controller.users[index]);
-            },
+          return RefreshIndicator(
+            onRefresh: controller.fetchAllUsers,
+            color: Colors.white,
+            backgroundColor: Colors.blue,
+            child: ListView.builder(
+              itemCount: controller.users.length,
+              itemBuilder: (context, index) {
+                return ListCard(
+                    user: controller.users.reversed.toList()[index]);
+              },
+            ),
           );
         }),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            controller.fetchAllUsers();
-            print('User is: ${controller.users[10].id}');
-          },
-          child: const Icon(Icons.refresh),
-        ));
+      ),
+    );
   }
 }
 

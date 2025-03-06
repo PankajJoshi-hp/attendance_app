@@ -15,7 +15,7 @@ class UsersViewModel extends GetxController {
     fetchAllUsers();
   }
 
-  Future<void> fetchAllUsers() async {
+Future<void> fetchAllUsers() async {
     
     fetchingData.value = true;
     try {

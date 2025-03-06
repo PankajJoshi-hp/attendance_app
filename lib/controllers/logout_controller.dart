@@ -36,9 +36,8 @@ class LogoutController extends GetxController {
         prefsBool.setBool('isLoggedOut', true);
         print('Token cleared');
       } else {
-        // print('error logging out');
         Fluttertoast.showToast(
-            msg: 'You have already been logged out.',
+            msg: 'Error: ${response.statusCode}',
             backgroundColor: Colors.red,
             fontSize: 20);
       }

@@ -11,7 +11,11 @@ class ApiServices {
         headers: headers ?? {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
-    } else {
+    } else if (method == 'POST'){
+      return await http.post(Uri.parse(url),
+      headers: headers ?? {'Content=Type': 'application/json'}
+      );
+    } else{
       throw Exception('Unsupported HTTP method: $method');
     }
   }
