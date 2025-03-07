@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
               translations: Translate(),
               locale: profileController.locale.value,
               fallbackLocale: Locale('en', 'US'),
-              theme: ThemeData(primarySwatch: Colors.green),
+              theme: ThemeData(primarySwatch: Colors.green, fontFamily: 'Raleway'),
               darkTheme: ThemeData.dark(),
               themeMode: _themeMode,
               home: SplashScreen(),
