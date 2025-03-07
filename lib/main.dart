@@ -12,6 +12,7 @@ import 'package:todo_app/controllers/logout_controller.dart';
 import 'package:todo_app/controllers/profile_page_controller.dart';
 import 'package:todo_app/features_fake_apis/view/all_users_page.dart';
 import 'package:todo_app/features_fake_apis/view/pagination.dart';
+import 'package:todo_app/features_fake_apis/view/searchable_dropdown.dart';
 import 'package:todo_app/firebase_options.dart';
 import 'package:todo_app/language_control/translate.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
@@ -246,6 +247,14 @@ class _HomePageState extends State<HomePage> {
                 Get.to(PaginationExample());
               },
               child: Text('Pagination Example'),
+              style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Colors.grey[100])),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Get.to(SearchableDropdown());
+              },
+              child: Text('Searchable Dropdown'),
               style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Colors.grey[100])),
             ),
