@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -6,23 +7,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/login_page.dart';
 
 class LogoutController extends GetxController {
-  final String apiUrl = 'https://hpcrm.apinext.in/api/v1/logout';
+  final String? apiUrl = dotenv.env['API_KEY_LOGOUT'];
   final RxBool isLogoutLoading = false.obs;
   final bool isLoggedOut = false;
 
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var get_Token = await prefs.getString('token');
+    var getToken = prefs.getString('token');
 
     isLogoutLoading.value = true;
 
     try {
       // await Future.delayed(Duration(seconds: 2));
       final response = await http.get(
-        Uri.parse(apiUrl),
+        Uri.parse(apiUrl!),
         headers: {
           "Content-Type": "application/json",
-          "Cookie": 'token=${get_Token}', // Attach cookies
+          "Cookie": 'token=$getToken', // Attach cookies
         },
       );
       // print('-------------------------');

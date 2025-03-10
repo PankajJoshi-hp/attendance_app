@@ -1,6 +1,7 @@
 import 'package:animation_list/animation_list.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/maps_demo.dart';
@@ -21,19 +22,19 @@ import 'package:animations/animations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PushNotificationService().initNotifications();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  var get_Token = prefs.getString('token');
+  var getToken = prefs.getString('token');
+  await dotenv.load(fileName: ".env");
   runApp(MyApp(
-    getToken: get_Token,
+    getToken: getToken,
   ));
 }
 
 class MyApp extends StatefulWidget {
-  final getToken;
-  MyApp({required this.getToken});
+  final dynamic getToken;
+  const MyApp({super.key, required this.getToken});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -230,33 +231,33 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Get.to(MapsDemo());
               },
-              child: Text('Map page'),
               style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Colors.blueGrey)),
+              child: Text('Map page'),
             ),
             ElevatedButton(
               onPressed: () {
                 Get.to(AllUsersPage());
               },
-              child: Text('All Users'),
               style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Colors.grey[100])),
+              child: Text('All Users'),
             ),
             ElevatedButton(
               onPressed: () {
                 Get.to(PaginationExample());
               },
-              child: Text('Pagination Example'),
               style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Colors.grey[100])),
+              child: Text('Pagination Example'),
             ),
             ElevatedButton(
               onPressed: () {
                 Get.to(SearchableDropdown());
               },
-              child: Text('Searchable Dropdown'),
               style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Colors.grey[100])),
+              child: Text('Searchable Dropdown'),
             ),
             // Text('Last message from Firebase Messaging:',
             //     style: Theme.of(context).textTheme.titleLarge),

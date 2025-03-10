@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:todo_app/features_fake_apis/models/users.dart';
 import 'package:todo_app/features_fake_apis/view/create_user_view.dart';
 import 'package:todo_app/features_fake_apis/view/single_user_page.dart';

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/edit_profile.dart';
-import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/logout_controller.dart';
 import 'package:animations/animations.dart';
 import 'package:todo_app/controllers/profile_page_controller.dart';
@@ -59,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               child: Row(
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     width: MediaQuery.sizeOf(context).width * 0.35,
                     child: Image.asset('assets/images/user.png'),
                   ),

@@ -54,7 +54,7 @@ class _EditProfileState extends State<EditProfile> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
+        return SizedBox(
           height: MediaQuery.sizeOf(context).height * 0.15,
           child: Center(
             child: Column(

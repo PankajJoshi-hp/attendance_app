@@ -39,12 +39,12 @@ class _SplashScreenState extends State<SplashScreen>
 
   void navigationPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var get_Token = prefs.getString('token');
+    var getToken = prefs.getString('token');
     SharedPreferences prefsBool = await SharedPreferences.getInstance();
-    var get_bool = prefsBool.getBool('isLoggedOut');
-    if (get_Token != null) {
+    var getBool = prefsBool.getBool('isLoggedOut');
+    if (getToken != null) {
       Get.offAll(() => HomePage());
-    } else if (get_bool == true) {
+    } else if (getBool == true) {
       Get.off(LogInPage());
     } else {
       Get.off(() => Onboarding());
@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: Colors.redAccent.withOpacity(0.9)),
+        decoration: BoxDecoration(color: Colors.redAccent.withValues(red: 0.9)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

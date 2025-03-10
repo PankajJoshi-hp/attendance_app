@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:todo_app/features_fake_apis/models/single_user_model.dart';
 import 'package:todo_app/features_fake_apis/services/fake_users_api.dart';
 
@@ -6,7 +7,8 @@ class GetSingleUser {
   final ApiServices apiService = ApiServices();
 
   Future<SingleUserModel> getSingleUser(int? userId) async {
-    final String url = 'https://api.escuelajs.co/api/v1/users/$userId';
+    String? baseUrl = dotenv.env['API_KEY_USERS'];
+    String url = '$baseUrl/$userId';
     final response = await apiService.fetchUsers(url);
 
     print('##########################');

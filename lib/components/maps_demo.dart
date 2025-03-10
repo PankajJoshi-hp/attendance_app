@@ -20,7 +20,7 @@ class MapsDemo extends StatefulWidget {
 
 class _MapsDemoState extends State<MapsDemo> {
   DeviceStatusController deviceInfoControl = Get.put(DeviceStatusController());
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
   late LatLng _center;
   MapType _currentMapType = MapType.normal;
   final Set<Marker> _markers = {};
@@ -54,7 +54,7 @@ class _MapsDemoState extends State<MapsDemo> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
+        return SizedBox(
           height: MediaQuery.sizeOf(context).height * 0.15,
           child: Center(
             child: Column(

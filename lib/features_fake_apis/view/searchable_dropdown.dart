@@ -13,6 +13,7 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
   bool isSearchFieldOpen = false;
   final TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> filteredCities = [];
+  int unusedVariable = 10;
 
   @override
   void initState() {

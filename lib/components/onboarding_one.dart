@@ -55,7 +55,7 @@ class _PageViewExampleState extends State<Onboarding>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: Colors.redAccent.withOpacity(0.9)),
+        decoration: BoxDecoration(color: Colors.redAccent.withValues(red: 0.9)),
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: <Widget>[

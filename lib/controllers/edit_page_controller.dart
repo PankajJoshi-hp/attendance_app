@@ -16,7 +16,7 @@ class EditPageController extends GetxController {
         firstDate: DateTime(1950),
         lastDate: DateTime(2100));
     if (pickedDate != null && pickedDate != selectedDate) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+      DateFormat('yyyy-MM-dd').format(pickedDate);
       selectedDate.value = pickedDate;
     } else {}
   }

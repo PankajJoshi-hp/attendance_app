@@ -1,21 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/components/break_page.dart';
 import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/components/profile_page.dart';
 import 'package:todo_app/controllers/deviceStatusController.dart';
 import 'package:todo_app/reusable_widgets/app_colors.dart';
-import 'package:todo_app/reusable_widgets/todo_modal.dart';
 
 class Controller extends GetxController {
-  final String apiUrl = 'https://hpcrm.apinext.in/api/v1/users/report';
-  final String secondUrl =
-      'https://hpcrm.apinext.in/api/v1/users/report/67a1c9446e2131c6dea76511';
+  final String? apiUrl = dotenv.env['API_KEY_REPORT'];
+  final String? secondUrl = dotenv.env['API_KEY_UPDATE_REPORT'];
   final formKey = GlobalKey<FormState>();
   // String text = 'No todos added';
   final TextEditingController textController = TextEditingController();
@@ -57,9 +55,9 @@ class Controller extends GetxController {
 
   Future<void> sendReport(selectedButtonType) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var get_Token = await prefs.getString('token');
+    var getToken = prefs.getString('token');
     try {
-      final response = await http.post(Uri.parse(apiUrl),
+      final response = await http.post(Uri.parse(apiUrl!),
           body: jsonEncode({
             'report_type': selectedButtonType,
             'report_description': reportController.text,
@@ -67,7 +65,7 @@ class Controller extends GetxController {
           }),
           headers: {
             "Content-Type": "application/json",
-            "Cookie": 'token=$get_Token'
+            "Cookie": 'token=$getToken'
           });
       print('------------------------------');
       print(response.body);

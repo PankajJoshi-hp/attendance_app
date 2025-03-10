@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/main.dart';
 
 class LoginController extends GetxController {
-  final String apiUrl = 'https://hpcrm.apinext.in/api/v1/login';
+  final String? apiUrl = dotenv.env['API_KEY_LOGIN'];
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final RxBool isLoginLoading = false.obs;
@@ -35,7 +35,7 @@ class LoginController extends GetxController {
     isLoginLoading.value = true;
 
     try {
-      final response = await http.post(Uri.parse(apiUrl),
+      final response = await http.post(Uri.parse(apiUrl!),
           body: jsonEncode({
             'email': emailController.text,
             'password': passwordController.text

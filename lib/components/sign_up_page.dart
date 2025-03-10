@@ -5,6 +5,8 @@ import 'package:todo_app/components/login_page.dart';
 import 'package:todo_app/controllers/signup_controller.dart';
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
@@ -34,25 +36,23 @@ class _SignUpPageState extends State<SignUpPage> {
               spacing: 30,
               children: <Widget>[
                 SizedBox(height: MediaQuery.sizeOf(context).height * 0.04),
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        'Create an account',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Start writing your todos today!',
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
+                Column(
+                  children: <Widget>[
+                    Text(
+                      'Create an account',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Start writing your todos today!',
+                      style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 15),
