@@ -24,7 +24,7 @@ class _SingleUserPageState extends State<SingleUserPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'User Details',
+          'User Details Page',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
