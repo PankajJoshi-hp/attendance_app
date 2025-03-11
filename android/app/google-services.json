@@ -1,44 +1,45 @@
 {
   "project_info": {
-    "project_number": "453273668889",
-    "project_id": "attendance-app-1833b",
-    "storage_bucket": "attendance-app-1833b.firebasestorage.app"
+    "project_number": "73615908589",
+    "project_id": "attendance-app-15c8b",
+    "storage_bucket": "attendance-app-15c8b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:453273668889:android:b5821f2cbad940dabfc988",
+        "mobilesdk_app_id": "1:73615908589:android:e30519115a0a6b1cefb6e4",
         "android_client_info": {
           "package_name": "com.attendance.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "453273668889-2qduhp5t56dov2is3pk3cpio4fp2ife8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.attendance.app",
-            "certificate_hash": "664cca64dd9a33e15807b7a82f306817bc1dfb11"
-          }
-        },
-        {
-          "client_id": "453273668889-h6q1p13piu8bp4j0obcrc6aod6e72eda.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA00GblfOFwWRyqAJpCP2ZVV6RnLQLrPC8"
+          "current_key": "AIzaSyAomIgTzR7dfy9cejF4W1XCRGE_bbDNrF0"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "453273668889-h6q1p13piu8bp4j0obcrc6aod6e72eda.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73615908589:android:3f61008dc45038e2efb6e4",
+        "android_client_info": {
+          "package_name": "com.attendance_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAomIgTzR7dfy9cejF4W1XCRGE_bbDNrF0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }
