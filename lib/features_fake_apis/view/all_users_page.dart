@@ -30,7 +30,7 @@ class _AllUsersPageState extends State<AllUsersPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('All Users Page'),
+          title: Text('All Users'),
           centerTitle: true,
           actions: [
             IconButton(
